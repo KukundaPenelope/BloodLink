@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HemoLink</string>
+    <string name="title1">Welcome</string>
+    <string name="title2">Instant Connection</string>
+    <string name="title3">SignUP</string>
+    <string name="title4">Discover Today</string>
+    <string name="description1">Welcome to HemoLink - Your Blood Connection App</string>
+    <string name="description2">HemoLink connects hospitals with nearby blood banks to ensure timely and accurate blood matching.</string>
+    <string name="description3">Join us in saving lives. Sign up to become a donor or register your blood bank today</string>
+    <string name="description4">Discover nearby blood banks, receive real-time match alerts, and contribute to life-saving efforts.</string>
+</resources>
