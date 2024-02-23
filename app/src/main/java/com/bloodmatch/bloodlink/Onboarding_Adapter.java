@@ -37,7 +37,7 @@ public class Onboarding_Adapter extends PagerAdapter {
             R.drawable.hemo,
             R.drawable.hemo10,
             R.drawable.hemo5,
-            R.drawable.hem
+            R.drawable.f9,
     };
 
     @Override

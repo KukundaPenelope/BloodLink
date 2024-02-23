@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:orientation="vertical"
-        android:background="#CFE7E7"
+        android:background="#D9F2EE"
         >
 <!--        <TextView-->
 <!--            android:layout_width="match_parent"-->
@@ -24,7 +24,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/h2"
+            android:src="@drawable/f7"
             />
     </LinearLayout>
     <LinearLayout
@@ -87,7 +87,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Find a blood match"
+                    android:text="Blood match"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -121,12 +121,18 @@
                     android:layout_height="60dp"
 
                     android:src="@drawable/baseline_add_location_alt_24" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:text="Locate Nearest "
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Bank "
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
@@ -159,23 +165,27 @@
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/baseline_person_24" />
+                    android:src="@drawable/group" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hospital"
+                    android:text="Know Your"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-
-                    android:textSize="20sp" />
-
-
+                    android:textSize="18sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Group"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/login"
+            android:id="@+id/about"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_row="0"
@@ -194,17 +204,17 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/login2"
+                    android:id="@+id/about2"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/baseline_login_24"
+                    android:src="@drawable/baseline_info_24"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Login"
+                    android:text="About Donation"
                     android:textColor="@color/black"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
 

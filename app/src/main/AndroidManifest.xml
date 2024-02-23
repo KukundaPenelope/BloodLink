@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -36,11 +40,11 @@
         <activity
             android:name=".Patient.Patient_Navigation"
             android:exported="false" />
-        <activity
-            android:name=".Patient.Nav"
-            android:exported="false"
-            android:label="@string/title_activity_nav"
-            android:theme="@style/Theme.BloodLink.NoActionBar" />
+<!--        <activity-->
+<!--            android:name=".Patient.Patient_Navigation"-->
+<!--            android:exported="false"-->
+<!--            android:label="@string/title_activity_nav"-->
+<!--            android:theme="@style/Theme.BloodLink.NoActionBar" />-->
         <activity
             android:name=".ForgotPassword"
             android:exported="false" />
