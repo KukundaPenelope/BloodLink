@@ -11,6 +11,11 @@
         android:icon="@drawable/baseline_search_24"
         android:visible="true"
         />
+    <item android:id="@+id/notifications"
+        android:title="Notifications"
+        android:icon="@drawable/baseline_notifications_24"
+        android:visible="true"
+        />
 
     <item android:title="Account"
         android:id="@+id/account"

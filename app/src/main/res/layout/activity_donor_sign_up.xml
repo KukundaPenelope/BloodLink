@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/logoCard"
         android:layout_centerInParent="true"
-        android:src="@drawable/sync2" />
+        android:src="@drawable/newlogo3" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/logoCard"
@@ -37,15 +37,17 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="60dp"
         android:foregroundGravity="center"
-        app:cardBackgroundColor="@color/red"
         android:layout_marginTop="90dp"
+
         android:layout_centerHorizontal="true"
         app:cardElevation="50dp">
+
         <ImageView
             android:id="@+id/imge"
             android:layout_width="140dp"
             android:layout_height="135dp"
-            android:src="@drawable/sync2" />
+            android:background="#FDF6FE"
+            android:src="@drawable/newlogo2" />
 
     </androidx.cardview.widget.CardView>
 
@@ -83,7 +85,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="First Name"
+                android:text="Names"
                 android:layout_marginTop="80dp"
                 android:layout_marginLeft="30dp"
                 android:textStyle="bold"
@@ -100,7 +102,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last Name"
+                android:text="Email"
                 android:layout_marginTop="150dp"
                 android:layout_marginLeft="30dp"
                 android:textStyle="bold"
@@ -139,13 +141,17 @@
                 android:layout_marginLeft="30dp"
                 android:textStyle="bold"
                 android:textSize="20dp" />
-            <EditText
+            <Spinner
+                android:id="@+id/genderEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/genderEditText"
-                android:layout_marginTop="310dp"
+                android:layout_below="@id/ageEditText"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="325dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"/>
+
+
+                />
 
             <!-- Blood Group -->
             <TextView
@@ -156,13 +162,16 @@
                 android:layout_marginLeft="30dp"
                 android:textStyle="bold"
                 android:textSize="20dp" />
-            <EditText
+            <Spinner
                 android:id="@+id/bloodGroupEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="380dp"
+                android:layout_below="@id/ageEditText"
+                android:layout_marginTop="390dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"/>
+                android:layout_marginLeft="25dp"
+
+                />
         </androidx.cardview.widget.CardView>
     </LinearLayout>
     <androidx.appcompat.widget.AppCompatButton
@@ -172,8 +181,9 @@
         android:layout_marginTop="670dp"
         android:layout_marginRight="90dp"
         android:layout_marginLeft="90dp"
-        android:text="SIGN UP"
+        android:text="PROCEED"
         android:textColor="@color/white"
+        android:id="@+id/proceed"
         android:textSize="15dp"
         android:textStyle="bold"
 
