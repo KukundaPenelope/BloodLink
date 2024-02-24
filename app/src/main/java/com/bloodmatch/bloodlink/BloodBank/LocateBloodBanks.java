@@ -1,5 +1,6 @@
 package com.bloodmatch.bloodlink.BloodBank;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,17 +34,29 @@ public class LocateBloodBanks extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locate_blood_banks);
 
-        recyclerView = findViewById(R.id.honorRequest);
+        recyclerView = findViewById(R.id.recyclerView);
+
         searchEditText = findViewById(R.id.search_district);
 
         // Set up RecyclerView
         bloodBanks = new ArrayList<>();
-        adapter = new BloodBankAdapter(bloodBanks);
+//        BloodBan = new ArrayList<>();
+//        bloodBanks = getBloodBankListFromDatabase();
+//        BloodBan.addAll(bloodBanks);
+
+//
+//        adapter = new BloodBankAdapter(this, bloodBanks);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapter);
+
+
+        // Set up Firebase reference
+        fetchDistricts();
+        adapter  = new BloodBankAdapter(this, bloodBanks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Set up Firebase reference
-        bloodBanksRef = FirebaseDatabase.getInstance().getReference("bloodbanks");
+
 
         // Set up TextWatcher for search EditText
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -58,7 +71,7 @@ public class LocateBloodBanks extends AppCompatActivity {
                 String district = charSequence.toString();
 
                 // Query the blood banks by district
-                queryBloodBanksByDistrict(district);
+                filterDistricts(district);
             }
 
             @Override
@@ -68,29 +81,40 @@ public class LocateBloodBanks extends AppCompatActivity {
         });
     }
 
-    private void queryBloodBanksByDistrict(String district) {
-        Query query;
-        if (district.isEmpty()) {
-            query = bloodBanksRef;
-        } else {
-            query = bloodBanksRef.orderByChild("district").equalTo(district);
-        }
-
-        query.addValueEventListener(new ValueEventListener() {
+    public void fetchDistricts() {
+        bloodBanks = new ArrayList<>();
+        bloodBanksRef = FirebaseDatabase.getInstance().getReference("bloodbanks");
+        bloodBanksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                bloodBanks.clear();
-                for (DataSnapshot bloodBankSnapshot : dataSnapshot.getChildren()) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot bloodBankSnapshot : snapshot.getChildren()) {
                     BloodBanks bloodBank = bloodBankSnapshot.getValue(BloodBanks.class);
                     bloodBanks.add(bloodBank);
                 }
-                adapter.notifyDataSetChanged();
+                updateBloodBankAdapter(bloodBanks);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle error
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle the error
             }
         });
     }
+    private void filterDistricts(String district){
+        List<BloodBanks> filteredDistricts = new ArrayList<>();
+        for (BloodBanks bloodBanks1: bloodBanks) {
+            if (bloodBanks1.getDistrict().toLowerCase().contains(district.toLowerCase())) {
+                filteredDistricts.add(bloodBanks1);
+            }
+
+        }
+        updateBloodBankAdapter(filteredDistricts);
+    }
+    private void updateBloodBankAdapter(List<BloodBanks> bloodBanks){
+        BloodBankAdapter bloodBankAdapter = new BloodBankAdapter(this,bloodBanks);
+        recyclerView.setAdapter(bloodBankAdapter);
+    }
+
+
+
 }

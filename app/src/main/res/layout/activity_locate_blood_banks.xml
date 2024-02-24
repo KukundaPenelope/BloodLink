@@ -13,7 +13,7 @@
         android:textSize="29dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:textStyle="italic"
+        android:textStyle="bold"
         android:autoSizeMaxTextSize="15dp"/>
 
     <TextView
@@ -23,7 +23,7 @@
         android:textColor="#DD0C08"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="20dp"
-        android:textStyle="italic"
+        android:textStyle="bold"
         android:textSize="20dp"/>
 
     <RelativeLayout
@@ -50,11 +50,13 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/honorRequest"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="160dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp" />
+
+
 
 </FrameLayout>

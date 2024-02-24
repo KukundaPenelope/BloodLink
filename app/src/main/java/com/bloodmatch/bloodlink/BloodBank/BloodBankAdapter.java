@@ -15,7 +15,7 @@ import java.util.List;
 public class BloodBankAdapter extends RecyclerView.Adapter<BloodBankAdapter.BloodBankViewHolder> {
     private List<BloodBanks> bloodBanks;
 
-    public BloodBankAdapter(List<BloodBanks> bloodBanks) {
+    public BloodBankAdapter(LocateBloodBanks locateBloodBanks, List<BloodBanks> bloodBanks) {
         this.bloodBanks = bloodBanks;
     }
 
@@ -36,6 +36,9 @@ public class BloodBankAdapter extends RecyclerView.Adapter<BloodBankAdapter.Bloo
     public int getItemCount() {
         return bloodBanks.size();
     }
+
+
+
 
     public static class BloodBankViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTextView;
