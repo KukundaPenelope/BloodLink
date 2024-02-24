@@ -31,8 +31,12 @@ import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hbb20.CountryCodePicker;
@@ -55,7 +59,7 @@ public class Patient_SignUp extends AppCompatActivity {
     private TextInputLayout passwordTextInputLayout;
 
     private DatabaseReference databaseReference;
-
+    FirebaseAuth firebaseAuth;
 
     private EditText firstNameEditText;
     private static final int PERMISSION_REQUEST_CODE = 1001;
@@ -65,14 +69,14 @@ public class Patient_SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_sign_up);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Patients");
 
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         ageEditText = findViewById(R.id.ageEditText);
         genderEditText = findViewById(R.id.genderEditText);
         bloodG=findViewById(R.id.bloodGroupEditText);
-
+        firebaseAuth=FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Patients");
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.gender_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderEditText.setAdapter(adapter);
@@ -148,8 +152,7 @@ public class Patient_SignUp extends AppCompatActivity {
                 } else {
                     saveToFirebase(email, phoneNumber, dob, location, password);
                     dialog.dismiss();
-                    finish();
-                    startActivity(new Intent(Patient_SignUp.this, MainActivity3.class));
+
                 }
             }
         });
@@ -201,16 +204,28 @@ public class Patient_SignUp extends AppCompatActivity {
         String lastName = lastNameEditText.getText().toString().trim();
         String age = ageEditText.getText().toString().trim();
         String gender = genderEditText.getSelectedItem().toString();
+        String Email= emailEditText.getText().toString().trim();
+        String psd=passwordEditText.getText().toString().trim();
 
-        // Create a new Patient object
-        Patient patient = new Patient(firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
+                            firebaseAuth.createUserWithEmailAndPassword(Email, psd)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                String patientId = firebaseAuth.getCurrentUser().getUid();
+                                                    //store data
+                                                Patient patient = new Patient(patientId,firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
+                                                databaseReference.child(patientId).setValue(patient);
+                                                Toast.makeText(Patient_SignUp.this, "Account Created.", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(Patient_SignUp.this, MainActivity3.class);
+                                                startActivity(intent);
+                                                finish();
+                                            } else {
+                                                Toast.makeText(Patient_SignUp.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
 
-        // Generate a unique key for the patient
-        String patientId = databaseReference.push().getKey();
-
-        // Save the patient to the database using the generated key
-        databaseReference.child(patientId).setValue(patient);
-
-        Toast.makeText(this, "Patient details saved successfully", Toast.LENGTH_SHORT).show();
     }
-}
+

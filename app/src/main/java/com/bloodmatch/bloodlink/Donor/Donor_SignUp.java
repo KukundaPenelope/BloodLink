@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -30,8 +31,12 @@ import com.bloodmatch.bloodlink.Patient.Patient_SignUp;
 import com.bloodmatch.bloodlink.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -54,6 +59,8 @@ public class Donor_SignUp extends AppCompatActivity {
     private TextInputLayout passwordTextInputLayout;
 
     private DatabaseReference databaseReference;
+    FirebaseAuth firebaseAuth;
+
 
     private static final int PERMISSION_REQUEST_CODE = 1001;
 
@@ -61,7 +68,7 @@ public class Donor_SignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_sign_up);
-
+        firebaseAuth=FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("Donors");
 
         firstNameEditText = findViewById(R.id.firstNameEditText);
@@ -198,22 +205,31 @@ public class Donor_SignUp extends AppCompatActivity {
         });
     }
 
-
     private void saveToFirebase(String email, String phoneNumber, String dob, String location, String password) {
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
         String age = ageEditText.getText().toString().trim();
-        String gender = genderEditText.getSelectedItem().toString().trim();
+        String gender = genderEditText.getSelectedItem().toString();
+        String Email= emailEditText.getText().toString().trim();
+        String psd=passwordEditText.getText().toString().trim();
 
-        // Create a new Patient object
-        Donor donor = new Donor(firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
-
-        // Generate a unique key for the patient
-        String donorId = databaseReference.push().getKey();
-
-        // Save the patient to the database using the generated key
-        databaseReference.child(donorId).setValue(donor);
-
-        Toast.makeText(this, "Donor details saved successfully", Toast.LENGTH_SHORT).show();
+        firebaseAuth.createUserWithEmailAndPassword(Email, psd)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            String donorId = firebaseAuth.getCurrentUser().getUid();
+                            //store data
+                            Donor donor = new Donor(donorId,firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
+                            databaseReference.child(donorId).setValue(donor);
+                            Toast.makeText(Donor_SignUp.this, "Account Created.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Donor_SignUp.this, MainActivity3.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(Donor_SignUp.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

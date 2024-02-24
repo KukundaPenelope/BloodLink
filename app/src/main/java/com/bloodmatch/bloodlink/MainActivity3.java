@@ -19,6 +19,7 @@ import com.bloodmatch.bloodlink.Donor.Donor_Navigation;
 import com.bloodmatch.bloodlink.Hospital.Hospital_Navigation;
 import com.bloodmatch.bloodlink.Patient.Patient_Navigation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,7 +72,13 @@ public class MainActivity3 extends AppCompatActivity {
                                     Toast.makeText(MainActivity3.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        });
+                        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity3.this, "Authentication failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
         signup.setOnClickListener(new View.OnClickListener() {
