@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -16,6 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BloodLink"
         tools:targetApi="31">
+        <activity
+            android:name=".BloodBank.LocateBloodBanks"
+            android:exported="false" />
+        <activity
+            android:name=".Donor.Donor_Home"
+            android:exported="false" />
         <activity
             android:name=".Hospital.Hospital_SignUp"
             android:exported="false" />
@@ -39,12 +44,11 @@
             android:exported="false" />
         <activity
             android:name=".Patient.Patient_Navigation"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".Patient.Patient_Navigation"-->
-<!--            android:exported="false"-->
-<!--            android:label="@string/title_activity_nav"-->
-<!--            android:theme="@style/Theme.BloodLink.NoActionBar" />-->
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".Patient.Patient_Navigation" -->
+        <!-- android:exported="false" -->
+        <!-- android:label="@string/title_activity_nav" -->
+        <!-- android:theme="@style/Theme.BloodLink.NoActionBar" /> -->
         <activity
             android:name=".ForgotPassword"
             android:exported="false" />

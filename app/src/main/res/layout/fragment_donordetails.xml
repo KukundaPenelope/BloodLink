@@ -10,30 +10,32 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" Request for a blood match  "
+        android:text="Request for a blood match"
         android:textColor="#000080"
         android:textSize="29dp"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="10dp"
         android:textStyle="italic"
-        android:autoSizeMaxTextSize="15dp"/>
+        android:autoSizeMaxTextSize="15dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/honorRequest"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
-
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Request "
-        android:id="@+id/cancel"
-        android:layout_marginRight="90dp"
-        android:layout_marginLeft="90dp"
+        android:text="Request"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:background="@drawable/button"/>
+        android:background="@drawable/button"
+        android:layout_marginRight="90dp"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp" />
 
 </LinearLayout>

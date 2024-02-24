@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Patient.Patient_Home">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/lin"
+        android:layout_marginTop="20dp" />
     <LinearLayout
         android:id="@+id/lin"
         android:layout_width="match_parent"
@@ -97,7 +104,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/patient"
+            android:id="@+id/locat"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_row="0"
@@ -143,7 +150,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/hospital"
+            android:id="@+id/knows"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_row="1"
@@ -185,7 +192,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/about"
+            android:id="@+id/abouts"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_row="0"

@@ -1,0 +1,22 @@
+{
+  "bloodbanks": [
+    {
+      "name": "MBARARA REGIONAL BLOOD BANK",
+      "district": "Mbarara",
+      "address": "9JPV+JMP, Mbarara",
+      "contact": "0483 22104"
+    },
+    {
+      "name": "ARUA REGIONAL BLOOD BANK",
+      "district": "Arua",
+      "address": "Arua Regional Referal Hospital,Avenue Road Arua",
+      "contact": "0476420080"
+    },
+    {
+    "name": "NAKASERO BLOOD BANK",
+    "district": "Kampala",
+    "address": "Nakasero Hill Rd, Kampala",
+    "contact": "0483 22104"
+    }
+  ]
+}

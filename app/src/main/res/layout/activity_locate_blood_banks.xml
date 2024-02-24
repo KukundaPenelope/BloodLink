@@ -3,38 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BloodBank.avail_bloodbanks">
-
-
+    tools:context=".BloodBank.LocateBloodBanks">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Available BloodBanks  "
+        android:text="Available Blood Banks"
         android:textColor="#FF000000"
         android:textSize="29dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:textStyle="italic"
         android:autoSizeMaxTextSize="15dp"/>
-<!--        android:layout_marginTop="10dp"-->
-
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find BloodBanks"
+        android:text="Find Blood Banks"
         android:textColor="#DD0C08"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="20dp"
         android:textStyle="italic"
         android:textSize="20dp"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-<!--        android:layout_below="@+id/back"-->
-<!--        android:id="@+id/search_user_layout">-->
 
     <RelativeLayout
         android:id="@+id/search_user_layout"
@@ -57,16 +47,14 @@
             android:hint="Search by district"
             android:padding="10dp" />
 
-
     </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/honorRequest"
         android:layout_width="match_parent"
-        android:layout_marginTop="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
         android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_height="200dp"/>
-
-
+        android:layout_marginLeft="20dp" />
 
 </FrameLayout>
