@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "217340673027",
+    "firebase_url": "https://bloodsync-a52bd-default-rtdb.firebaseio.com",
+    "project_id": "bloodsync-a52bd",
+    "storage_bucket": "bloodsync-a52bd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217340673027:android:5c4793a86d08e872fb6236",
+        "android_client_info": {
+          "package_name": "com.bloodmatch.bloodlink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvCjvtG4xcfabo_b5tRxbIbsngVGkuwes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
