@@ -1,17 +1,18 @@
 package com.bloodmatch.bloodlink.Donor;
 
 public class Donor {
-    private String uid, firstName, lastName, age, gender, email, phoneNumber, dob, location, password;
+    private String uid, firstName, lastName, age, gender,bloodGroup, email, phoneNumber, dob, location, password;
 
     public Donor() {
     }
 
-    public Donor(String uid, String firstName, String lastName, String age, String gender, String email, String phoneNumber, String dob, String location, String password) {
+    public Donor(String uid, String firstName, String lastName, String age, String gender, String bloodGroup,String email, String phoneNumber, String dob, String location, String password) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.gender = gender;
+        this.bloodGroup=bloodGroup;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.dob = dob;
@@ -57,6 +58,14 @@ public class Donor {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getBloodGroup() {
+        return bloodGroup;
+    }
+
+    public void setBloodGroup(String bloodGroup) {
+        this.bloodGroup = bloodGroup;
     }
 
     public String getEmail() {

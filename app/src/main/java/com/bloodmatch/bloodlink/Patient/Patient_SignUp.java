@@ -203,6 +203,7 @@ public class Patient_SignUp extends AppCompatActivity {
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
         String age = ageEditText.getText().toString().trim();
+        String bloodGroup=bloodG.getSelectedItem().toString().trim();
         String gender = genderEditText.getSelectedItem().toString();
         String Email= emailEditText.getText().toString().trim();
         String psd=passwordEditText.getText().toString().trim();
@@ -214,7 +215,7 @@ public class Patient_SignUp extends AppCompatActivity {
                                             if (task.isSuccessful()) {
                                                 String patientId = firebaseAuth.getCurrentUser().getUid();
                                                     //store data
-                                                Patient patient = new Patient(patientId,firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
+                                                Patient patient = new Patient(patientId,firstName, lastName, age, gender, bloodGroup,email, phoneNumber, dob, location, password);
                                                 databaseReference.child(patientId).setValue(patient);
                                                 Toast.makeText(Patient_SignUp.this, "Account Created.", Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(Patient_SignUp.this, MainActivity3.class);

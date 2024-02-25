@@ -210,6 +210,7 @@ public class Donor_SignUp extends AppCompatActivity {
         String lastName = lastNameEditText.getText().toString().trim();
         String age = ageEditText.getText().toString().trim();
         String gender = genderEditText.getSelectedItem().toString();
+        String bloodGroup=bloodG.getSelectedItem().toString().trim();
         String Email= emailEditText.getText().toString().trim();
         String psd=passwordEditText.getText().toString().trim();
 
@@ -220,7 +221,7 @@ public class Donor_SignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             String donorId = firebaseAuth.getCurrentUser().getUid();
                             //store data
-                            Donor donor = new Donor(donorId,firstName, lastName, age, gender, email, phoneNumber, dob, location, password);
+                            Donor donor = new Donor(donorId,firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, location, password);
                             databaseReference.child(donorId).setValue(donor);
                             Toast.makeText(Donor_SignUp.this, "Account Created.", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Donor_SignUp.this, MainActivity3.class);

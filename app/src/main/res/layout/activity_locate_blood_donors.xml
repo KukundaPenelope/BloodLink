@@ -4,18 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".BloodBank.LocateBloodBanks">
-
+    tools:context=".Donor.LocateBloodDonors">
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/red"
-        app:title="Find a Blood Bank"
+        app:title="Find a Blood Donor"
         app:titleTextColor="@color/white"
         app:navigationIcon="@drawable/baseline_arrow_back_24"
-        >
+       >
     </androidx.appcompat.widget.Toolbar>
     <RelativeLayout
         android:id="@+id/search_user_layout"
@@ -33,7 +32,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Available Blood Banks"
+                android:text="Available Blood Donors"
                 android:textColor="#FF000000"
                 android:textSize="29dp"
                 android:layout_marginTop="20dp"
@@ -44,7 +43,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Find Blood Banks"
+                android:text="Find Blood Donors"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"
@@ -54,7 +53,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/search_district"
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -65,7 +64,7 @@
             android:drawableLeft="@drawable/baseline_search_24"
             android:drawablePadding="8dp"
             android:elevation="4dp"
-            android:hint="Search by district"
+            android:hint="Search by Blood Group"
             android:padding="10dp" />
 
     </RelativeLayout>

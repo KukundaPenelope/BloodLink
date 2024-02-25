@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bloodmatch.bloodlink.BloodBank.LocateBloodBanks;
 import com.bloodmatch.bloodlink.BloodBank.avail_bloodbanks;
+import com.bloodmatch.bloodlink.Donor.LocateBloodDonors;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -77,7 +78,7 @@ public class Patient_Home extends Fragment {
         findBloodMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), LocateBloodBanks.class);
+                Intent intent = new Intent(getActivity(), LocateBloodDonors.class);
                 startActivity(intent);
             }
         });

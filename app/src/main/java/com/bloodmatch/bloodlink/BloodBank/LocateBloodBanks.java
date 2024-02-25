@@ -1,26 +1,33 @@
 package com.bloodmatch.bloodlink.BloodBank;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import android.Manifest;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class LocateBloodBanks extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BloodBankAdapter adapter;
@@ -28,6 +35,7 @@ public class LocateBloodBanks extends AppCompatActivity {
     private EditText searchEditText;
 
     private DatabaseReference bloodBanksRef;
+    private Toolbar backTool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +45,22 @@ public class LocateBloodBanks extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
 
         searchEditText = findViewById(R.id.search_district);
+        backTool = findViewById(R.id.toolbar);
+        // Initialize the toolbar
+        setSupportActionBar(backTool);
 
+        // Enable the back arrow
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        backTool.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle back arrow click
+                // You can use onBackPressed() or your custom logic here
+                onBackPressed();
+            }
+        });
         // Set up RecyclerView
         bloodBanks = new ArrayList<>();
 //        BloodBan = new ArrayList<>();
@@ -55,7 +78,6 @@ public class LocateBloodBanks extends AppCompatActivity {
         adapter  = new BloodBankAdapter(this, bloodBanks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
 
 
         // Set up TextWatcher for search EditText
@@ -80,7 +102,7 @@ public class LocateBloodBanks extends AppCompatActivity {
             }
         });
     }
-
+//
     public void fetchDistricts() {
         bloodBanks = new ArrayList<>();
         bloodBanksRef = FirebaseDatabase.getInstance().getReference("bloodbanks");

@@ -1,9 +1,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    >
+    tools:ignore="MissingDefaultResource">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,13 +44,13 @@
                 android:textSize="16sp"
                 android:textColor="@color/gray"/>
 
-            <TextView
-                android:id="@+id/addressTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="16sp"
-                android:textColor="@color/black"/>
+<!--            <TextView-->
+<!--                android:id="@+id/addressTextView"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="2dp"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textColor="@color/black"/>-->
 
             <TextView
                 android:id="@+id/contactTextView"
@@ -60,6 +62,23 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="30dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp">
+            <TextView
+                android:id="@+id/bloodGroupText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="0+"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@color/red"
+                />
+        </LinearLayout>
     </LinearLayout>
 
 
