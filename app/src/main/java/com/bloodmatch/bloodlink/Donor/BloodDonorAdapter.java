@@ -106,8 +106,10 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
             public void onClick(View v) {
                 // Call the donor
                 String phoneNumber = finalDonor.getPhoneNumber();
+                String countryCode="+256";
+                String phoneNumberWithCountryCode = countryCode + phoneNumber;
                 if (!phoneNumber.isEmpty()) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumberWithCountryCode));
                     context.startActivity(intent);
                 } else {
                     Toast.makeText(context, "Phone number not available", Toast.LENGTH_SHORT).show();

@@ -76,8 +76,9 @@ public class BloodBankAdapter extends RecyclerView.Adapter<BloodBankAdapter.Bloo
                     @Override
                     public void onClick(View view) {
                         String phoneNumber = bloodBank.getContact();
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-
+                        String countryCode="+256";
+                        String phoneNumberWithCountryCode = countryCode + phoneNumber;
+                            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumberWithCountryCode));
                         // Check phone call permissions
                         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                             // Phone call permissions granted, start the dialer intent
