@@ -51,7 +51,8 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         Donor donor = donorList.get(position);
 
         // Set the donor information in the item layout
-        holder.nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
+//        holder.nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
+        holder.nameTextView.setText(donor.getUid());
         holder.districtTextView.setText(donor.getLocation());
         holder.contactTextView.setText(donor.getPhoneNumber());
         holder.bloodGroupText.setText(donor.getBloodGroup());
@@ -71,7 +72,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView, districtTextView, contactTextView, bloodGroupText;
+        public TextView nameTextView,districtTextView, contactTextView, bloodGroupText;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -95,7 +96,8 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         LinearLayout callLayout = dialog.findViewById(R.id.callLayout);
         LinearLayout locateLayout = dialog.findViewById(R.id.locateLayout);
 
-        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
+//        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
+        nameTextView.setText(donor.getUid());
         districtTextView.setText(donor.getLocation());
         contactTextView.setText(donor.getPhoneNumber());
 
@@ -117,6 +119,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
                 dialog.dismiss();
             }
         });
+
         locateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,4 +151,6 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 
 
     }
+
+
 }
