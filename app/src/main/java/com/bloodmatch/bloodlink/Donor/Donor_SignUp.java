@@ -56,7 +56,6 @@ public class Donor_SignUp extends AppCompatActivity {
     private EditText dobEditText;
     private EditText locationEditText;
     private EditText passwordEditText;
-    private TextInputLayout passwordTextInputLayout;
 
     private DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;

@@ -71,8 +71,14 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         return donorList.size();
     }
 
+    public interface OnRequestClickListener {
+        void onRequestClick(Donor donor);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView,districtTextView, contactTextView, bloodGroupText;
+
+        public LinearLayout requestLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -95,6 +101,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         TextView contactTextView = dialog.findViewById(R.id.contactTextView);
         LinearLayout callLayout = dialog.findViewById(R.id.callLayout);
         LinearLayout locateLayout = dialog.findViewById(R.id.locateLayout);
+        LinearLayout requestLayout= dialog.findViewById(R.id.requestLayout);
 
 //        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
         nameTextView.setText(donor.getUid());
@@ -117,6 +124,13 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
                     Toast.makeText(context, "Phone number not available", Toast.LENGTH_SHORT).show();
                 }
                 dialog.dismiss();
+            }
+        });
+
+        requestLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bloodmatch.bloodlink.BloodBank.BloodBank_Navigation;
 import com.bloodmatch.bloodlink.Donor.Donor_Navigation;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         // Simulating splash screen
         new Handler().postDelayed(new Runnable() {
             @Override

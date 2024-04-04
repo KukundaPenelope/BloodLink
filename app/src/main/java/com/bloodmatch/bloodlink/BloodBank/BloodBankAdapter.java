@@ -28,7 +28,7 @@ import java.util.List;
 public class BloodBankAdapter extends RecyclerView.Adapter<BloodBankAdapter.BloodBankViewHolder> {
     private List<BloodBanks> bloodBanks;
     private Context context;
-    private static final int PERMISSION_REQUEST_CODE = 1;
+    public static final int PERMISSION_REQUEST_CODE = 1;
 
     public BloodBankAdapter(Context context, List<BloodBanks> bloodBanks) {
         this.context = context;

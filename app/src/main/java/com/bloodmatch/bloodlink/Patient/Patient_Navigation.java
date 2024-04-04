@@ -56,8 +56,14 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
             if (itemID == R.id.home){
                 showDrawerLayoutFragment(new Patient_Home());
             }
-            else {
-
+            else if (itemID == R.id.search){
+                showDrawerLayoutFragment(new LocateBloodBanksFragment());
+            }
+            else if (itemID == R.id.notifications){
+                showDrawerLayoutFragment(new PatientNotifications());
+            }
+            else if (itemID == R.id.account){
+                showDrawerLayoutFragment(new PatientAccount());
             }
             return true;
         });
@@ -95,14 +101,14 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
     }
 
 
-    private void showDrawerLayoutFragment(Patient_Home patientHome) {
+    private void showDrawerLayoutFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.drawer_fragment_container, patientHome)
+                .replace(R.id.drawer_fragment_container, fragment)
                 .commit();
         hideBottomNavigationFragment();
 
         // Check if the fragment is present in the BottomNavigationView
-        int itemId = getBottomNavigationItemId(patientHome);
+        int itemId = getBottomNavigationItemId(fragment);
         MenuItem bottomNavigationItem = binding.bottomNavigationView.getMenu().findItem(itemId);
 
         // Set the visibility state for the BottomNavigationView
@@ -124,7 +130,13 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
     private int getBottomNavigationItemId(Fragment fragment) {
         if (fragment instanceof Patient_Home) {
             return R.id.home;
-        } else {}
+        } else if (fragment instanceof LocateBloodBanksFragment) {
+            return R.id.search;
+        } else if (fragment instanceof PatientNotifications) {
+            return R.id.notifications;
+        } else if (fragment instanceof PatientAccount) {
+            return R.id.account;
+        }
         return -1;
     }
 
@@ -133,7 +145,15 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
         highlightSelectedItem(itemId);
         if (itemId == R.id.home1) {
             showDrawerLayoutFragment(new Patient_Home());
-        }else if (itemId == R.id.nav_logoout) {
+        } else if (itemId == R.id.settings) {
+            showDrawerLayoutFragment(new LocateBloodBanksFragment());
+            
+        }  else if (itemId == R.id.prof) {
+            showDrawerLayoutFragment(new LocateBloodBanksFragment());
+
+        }
+
+        else if (itemId == R.id.nav_logoout) {
             // Create an AlertDialog to confirm logout
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Logout");

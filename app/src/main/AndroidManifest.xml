@@ -21,6 +21,30 @@
         android:theme="@style/Theme.BloodLink"
         tools:targetApi="31">
         <activity
+            android:name=".BloodBank.BloodBank_Signup"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.ContactUsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.DonationProcessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.AmIEligibleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.WhyDonateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.AboutDonation"
+            android:exported="false" />
+        <activity
+            android:name=".DonationSites.LocateDonationSites"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.AvailablePatientsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Donor.LocateBloodDonors"
             android:exported="false" />
         <activity

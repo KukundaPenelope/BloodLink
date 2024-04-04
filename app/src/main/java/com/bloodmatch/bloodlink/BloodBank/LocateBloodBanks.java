@@ -136,7 +136,11 @@ public class LocateBloodBanks extends AppCompatActivity {
         BloodBankAdapter bloodBankAdapter = new BloodBankAdapter(this,bloodBanks);
         recyclerView.setAdapter(bloodBankAdapter);
     }
-
+    @Override
+    public void onBackPressed() {
+        // Navigate back to the previous activity
+        super.onBackPressed();
+    }
 
 
 }

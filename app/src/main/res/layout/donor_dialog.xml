@@ -5,6 +5,7 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -65,6 +66,28 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
         >
+        <LinearLayout
+            android:id="@+id/requestLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="30dp"
+
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_send_to_mobile_24"
+                android:layout_marginEnd="10dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request"
+                android:layout_gravity="center_horizontal"
+                />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/callLayout"
             android:layout_width="match_parent"

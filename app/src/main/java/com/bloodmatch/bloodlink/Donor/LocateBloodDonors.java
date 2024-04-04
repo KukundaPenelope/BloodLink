@@ -12,7 +12,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import com.bloodmatch.bloodlink.Patient.Request;
+import com.bloodmatch.bloodlink.Patient.RequestManager;
 import com.bloodmatch.bloodlink.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,9 +25,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-public class LocateBloodDonors extends AppCompatActivity {
+public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAdapter.OnRequestClickListener {
     private EditText searchEditText;
     private RecyclerView recyclerView;
     private BloodDonorAdapter donorAdapter;
@@ -31,6 +36,8 @@ public class LocateBloodDonors extends AppCompatActivity {
     private Toolbar backTool;
 
     DatabaseReference donorsRef;
+    RequestManager requestManager = new RequestManager();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +78,8 @@ public class LocateBloodDonors extends AppCompatActivity {
         // Set a text watcher for the search EditText
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -80,7 +88,8 @@ public class LocateBloodDonors extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         fetchAllBloodDonors();
 
@@ -110,6 +119,7 @@ public class LocateBloodDonors extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Handle database error
+
                 }
             });
         }
@@ -136,5 +146,23 @@ public class LocateBloodDonors extends AppCompatActivity {
                 // Handle database error
             }
         });
+    }
+@Override
+    public void onRequestClick(Donor donor) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String patientId = currentUser.getUid();
+            Request request = new Request();
+            request.setDonorId(donor.getUid());
+            request.setPatientId(patientId);
+            request.setRequestTime(Calendar.getInstance().getTime().toString());
+
+            requestManager.saveRequest(request);
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        // Navigate back to the previous activity
+        super.onBackPressed();
     }
 }

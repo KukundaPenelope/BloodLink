@@ -51,6 +51,15 @@ public class MainActivity3 extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
+
+//        signin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity3.this, Donor_Navigation.class);
+//                startActivity(intent);
+//            }
+//        });
+
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +77,7 @@ public class MainActivity3 extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     checkUserTypeAndRedirect();
+//                                    saveUserTypeAndRedirect("Donors", Donor_Navigation.class);
                                 } else {
                                     Toast.makeText(MainActivity3.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }

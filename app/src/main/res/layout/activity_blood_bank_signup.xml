@@ -1,0 +1,136 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BloodBank.BloodBank_Signup">
+
+
+    <LinearLayout
+        android:id="@+id/logoContainer"
+        android:layout_width="500dp"
+        android:layout_height="170dp"
+        android:orientation="horizontal"
+        android:elevation="30dp"
+        android:gravity="center">
+
+        <!-- Placeholder for rounded bottom -->
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bottom_background"
+            />
+
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/logoCard"
+        android:layout_centerInParent="true"
+        android:src="@drawable/newlogo3" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/logoCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="60dp"
+        android:foregroundGravity="center"
+        android:layout_marginTop="90dp"
+
+        android:layout_centerHorizontal="true"
+        app:cardElevation="50dp">
+
+        <ImageView
+            android:id="@+id/imge"
+            android:layout_width="140dp"
+            android:layout_height="135dp"
+            android:background="#FDF6FE"
+            android:src="@drawable/newlogo2" />
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+    <!-- Signup Card -->
+    <LinearLayout
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoContainer"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SIGN UP"
+                android:gravity="center"
+                android:layout_marginTop="30dp"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BloodBank Name"
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="30dp"
+                android:textStyle="bold"
+                android:textSize="20dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bloodbankEditText"
+                android:layout_marginTop="100dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="District"
+                android:layout_marginTop="150dp"
+                android:layout_marginLeft="30dp"
+                android:textStyle="bold"
+                android:textSize="20dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/districtEditText"
+                android:layout_marginTop="170dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"/>
+
+
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:layout_marginTop="530dp"
+        android:layout_marginRight="90dp"
+        android:layout_marginLeft="90dp"
+        android:text="PROCEED"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:id="@+id/sign_upb"
+        android:textStyle="bold"
+
+        />
+
+</RelativeLayout>
