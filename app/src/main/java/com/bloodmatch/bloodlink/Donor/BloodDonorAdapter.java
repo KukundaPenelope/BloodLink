@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bloodmatch.bloodlink.R;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.ViewHolder> {
@@ -54,7 +56,9 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 //        holder.nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
         holder.nameTextView.setText(donor.getUid());
         holder.districtTextView.setText(donor.getLocation());
-        holder.contactTextView.setText(donor.getPhoneNumber());
+        String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
+        holder.contactTextView.setText(hashedPhoneNumber);
+//        holder.contactTextView.setText(donor.getPhoneNumber());
         holder.bloodGroupText.setText(donor.getBloodGroup());
 
         // Set click listener for the item view
@@ -106,16 +110,25 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 //        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
         nameTextView.setText(donor.getUid());
         districtTextView.setText(donor.getLocation());
-        contactTextView.setText(donor.getPhoneNumber());
+        // Hash the phone number before displaying it
+        String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
+        contactTextView.setText(hashedPhoneNumber);
 
         final Donor finalDonor = donor; // Create a final variable to capture the donor object
-
+        requestLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Implement your logic to send a request to the donor
+//                sendRequestToDonor(donor);
+                dialog.dismiss();
+            }
+        });
         callLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Call the donor
+                // Call the donor using the original phone number
                 String phoneNumber = finalDonor.getPhoneNumber();
-                String countryCode="+256";
+                String countryCode = "+256";
                 String phoneNumberWithCountryCode = countryCode + phoneNumber;
                 if (!phoneNumber.isEmpty()) {
                     Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumberWithCountryCode));
@@ -126,6 +139,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
                 dialog.dismiss();
             }
         });
+
 
         requestLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,5 +180,25 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 
     }
 
+// Method to hash the phone number
+private String hashPhoneNumber(String phoneNumber) {
+    // Implement your hashing algorithm here
+    // For example, you can use MD5 or SHA-256
+    // Here's a simple example using MD5
+    try {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        digest.update(phoneNumber.getBytes());
+        byte[] hashedBytes = digest.digest();
+        // Convert the byte array to a hexadecimal string
+        StringBuilder builder = new StringBuilder();
+        for (byte b : hashedBytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    } catch (NoSuchAlgorithmException e) {
+        e.printStackTrace();
+        return phoneNumber; // Return original number in case of error
+    }
+}
 
 }

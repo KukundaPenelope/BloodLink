@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,7 +39,8 @@ public class Donor_Navigation extends AppCompatActivity {
     private Spinner bloodGroupSpinner;
     private DatabaseReference patientsRef;
     private Button find;
-    private ImageView logout;
+    private TextView donation, viewRequests;
+    private ImageView logout, requestsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class Donor_Navigation extends AppCompatActivity {
         districtAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, districts);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         districtSpinner = findViewById(R.id.districtEditText);
+        donation=findViewById(R.id.donation2);
+        viewRequests=findViewById(R.id.viewRequest);
+        requestsView=findViewById(R.id.requestView);
         ImageView donationSitesImageView = findViewById(R.id.donationSites);
         ImageView donorsProfileImageView = findViewById(R.id.donorsProfile);
         ImageView rewardsImageView = findViewById(R.id.rewards);
@@ -91,7 +96,30 @@ public class Donor_Navigation extends AppCompatActivity {
                 builder.show();
             }
         });
-
+        viewRequests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Donor_Navigation.this, "View Requests", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Donor_Navigation.this, Donor_Notifications.class);
+                startActivity(intent);
+            }
+        });
+        requestsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(Donor_Navigation.this, "View Requests", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Donor_Navigation.this, Donor_Notifications.class);
+                startActivity(intent);
+            }
+        });
+        donation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Donor_Navigation.this, "Locate Donation sites", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Donor_Navigation.this, LocateDonationSites.class);
+                startActivity(intent);
+            }
+        });
         donationSitesImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

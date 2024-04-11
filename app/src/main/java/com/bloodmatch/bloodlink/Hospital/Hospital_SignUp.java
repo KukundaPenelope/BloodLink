@@ -65,11 +65,8 @@ public class Hospital_SignUp extends AppCompatActivity {
             public void onClick(View v) {
                 String name = hosptalNameEditText.getText().toString().trim();
                 String district = districtEditText.getText().toString().trim();
-                String location = locationEditText.getText().toString().trim();
-                String phone = phoneholder.getText().toString().trim();
-                String email= emailEditText.getText().toString().trim();
 
-                if (name.isEmpty() || district.isEmpty() || location.isEmpty() || phone.isEmpty() || email.isEmpty()){
+                if (name.isEmpty() || district.isEmpty()){
                     Toast.makeText(com.bloodmatch.bloodlink.Hospital.Hospital_SignUp.this, "Please fill in all the required fields", Toast.LENGTH_SHORT).show();
                 } else {
                     showPopupForm();
@@ -87,9 +84,9 @@ public class Hospital_SignUp extends AppCompatActivity {
 
         final AlertDialog dialog = dialogBuilder.create();
         dialog.show();
-        locationEditText = findViewById(R.id.locationEditText);
-        phoneholder = findViewById(R.id.phoneholder);
-        emailEditText = findViewById(R.id.emailEditText);
+        locationEditText = dialogView.findViewById(R.id.locationEditText);
+        phoneholder = dialogView.findViewById(R.id.phoneholder);
+        emailEditText = dialogView.findViewById(R.id.emailEditText);
         locationEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

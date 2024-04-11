@@ -152,13 +152,13 @@ public class MainActivity3 extends AppCompatActivity {
                                     }
 
                                     // If not a hospital, check under BloodBanks
-                                    DatabaseReference bloodBanksRef = databaseReference.child("BloodBanks").child(uid);
+                                    DatabaseReference bloodBanksRef = databaseReference.child("bloodbanks").child(uid);
                                     bloodBanksRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 // User is a blood bank
-                                                saveUserTypeAndRedirect("BloodBanks", BloodBank_Navigation.class);
+                                                saveUserTypeAndRedirect("bloodbanks", BloodBank_Navigation.class);
                                                 return;
                                             }
 

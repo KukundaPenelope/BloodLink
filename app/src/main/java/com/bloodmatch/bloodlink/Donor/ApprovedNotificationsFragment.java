@@ -1,4 +1,4 @@
-package com.bloodmatch.bloodlink.Patient;
+package com.bloodmatch.bloodlink.Donor;
 
 import android.os.Bundle;
 
@@ -9,19 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bloodmatch.bloodlink.R;
-
-public class PatientAccount extends Fragment {
-
-
-    public PatientAccount() {
-        // Required empty public constructor
+public class ApprovedNotificationsFragment extends Fragment {
+    public static ApprovedNotificationsFragment newInstance() {
+        return new ApprovedNotificationsFragment();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_patient_account, container, false);
+        return inflater.inflate(R.layout.fragment_approved_notifications, container, false);
     }
 }

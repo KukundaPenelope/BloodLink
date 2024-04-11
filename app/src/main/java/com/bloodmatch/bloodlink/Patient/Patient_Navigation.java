@@ -1,12 +1,10 @@
 package com.bloodmatch.bloodlink.Patient;
 
-import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,30 +15,36 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 
 import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.R;
-import com.bloodmatch.bloodlink.databinding.ActivityNavigationBinding;
 import com.bloodmatch.bloodlink.databinding.ActivityPatientNavigationBinding;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class Patient_Navigation  extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
-        ActivityPatientNavigationBinding binding;
-        private DrawerLayout drawerLayout;
-        Toolbar bar;
-        ActionBarDrawerToggle toggle;
-        MenuItem selectedDrawerItem= null;
+public class Patient_Navigation extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    ActivityPatientNavigationBinding binding;
+    private DrawerLayout drawerLayout;
+    Toolbar bar;
+    private DatabaseReference usersRef;
+
+    ActionBarDrawerToggle toggle;
+    MenuItem selectedDrawerItem = null;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityPatientNavigationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        bar=findViewById(R.id.toolbar);
-        showDrawerLayoutFragment(new Patient_Home());
+        bar = findViewById(R.id.toolbar);
         setSupportActionBar(bar);
-        drawerLayout=findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         showDrawerLayoutFragment(new Patient_Home());
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -49,20 +53,52 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Get the header view of the navigation drawer
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView userNameTextView = headerView.findViewById(R.id.userNameTextView);
+        // Initialize the database reference
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        usersRef = database.getReference("Patients");
+
+// Get the current user's ID from Firebase Authentication
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String patientId = currentUser.getUid();
+
+            usersRef.child(patientId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String fname = dataSnapshot.child("email").getValue(String.class);
+//                        String lname = dataSnapshot.child("lastname").getValue(String.class);
+
+//                        String fullName = fname + " " + lname;
+                        userNameTextView.setText(fname);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(Patient_Navigation.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            userNameTextView.setText("User not authenticated");
+        }
+
+
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemID = item.getItemId();
             MenuItem bottomNavigationItem = binding.bottomNavigationView.getMenu().findItem(itemID);
             highlightSelectedItem(itemID);
-            if (itemID == R.id.home){
+            if (itemID == R.id.home) {
                 showDrawerLayoutFragment(new Patient_Home());
-            }
-            else if (itemID == R.id.search){
+            } else if (itemID == R.id.search) {
                 showDrawerLayoutFragment(new LocateBloodBanksFragment());
-            }
-            else if (itemID == R.id.notifications){
+            } else if (itemID == R.id.notifications) {
                 showDrawerLayoutFragment(new PatientNotifications());
-            }
-            else if (itemID == R.id.account){
+            } else if (itemID == R.id.account) {
                 showDrawerLayoutFragment(new PatientAccount());
             }
             return true;
@@ -71,16 +107,14 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                binding.bottomNavigationView.setVisibility((int) (View.VISIBLE -slideOffset));
+                binding.bottomNavigationView.setVisibility((int) (View.VISIBLE - slideOffset));
             }
+
             public void onDrawerClosed(@NonNull View drawerView) {
                 super.onDrawerClosed(drawerView);
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
-
-
-
     }
 
     private void highlightSelectedItem(int itemId) {
@@ -100,7 +134,6 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
         }
     }
 
-
     private void showDrawerLayoutFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.drawer_fragment_container, fragment)
@@ -112,13 +145,15 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
         MenuItem bottomNavigationItem = binding.bottomNavigationView.getMenu().findItem(itemId);
 
         // Set the visibility state for the BottomNavigationView
-        if (bottomNavigationItem != null) {
+        if (bottomNavigationItem == null) {
+            binding.bottomNavigationView.setVisibility(View.GONE);
+
+        } else {
             binding.bottomNavigationView.setVisibility(View.VISIBLE);
             bottomNavigationItem.setChecked(true); // Select the item in the bottom navigation
-        } else {
-            binding.bottomNavigationView.setVisibility(View.GONE);
         }
     }
+
     private void hideBottomNavigationFragment() {
         Fragment bottomNavFragment = getSupportFragmentManager().findFragmentById(R.id.bottom_nav_fragment_container);
         if (bottomNavFragment != null && bottomNavFragment.isVisible()) {
@@ -127,6 +162,7 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
                     .commit();
         }
     }
+
     private int getBottomNavigationItemId(Fragment fragment) {
         if (fragment instanceof Patient_Home) {
             return R.id.home;
@@ -147,13 +183,12 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
             showDrawerLayoutFragment(new Patient_Home());
         } else if (itemId == R.id.settings) {
             showDrawerLayoutFragment(new LocateBloodBanksFragment());
-            
-        }  else if (itemId == R.id.prof) {
-            showDrawerLayoutFragment(new LocateBloodBanksFragment());
 
-        }
+        } else if (itemId == R.id.prof) {
+            Intent intent = new Intent(Patient_Navigation.this, Profile.class);
+            startActivity(intent);
 
-        else if (itemId == R.id.nav_logoout) {
+        } else if (itemId == R.id.nav_logoout) {
             // Create an AlertDialog to confirm logout
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Logout");
@@ -187,14 +222,6 @@ public class Patient_Navigation  extends AppCompatActivity implements Navigation
         } else {
             super.onBackPressed();
         }
-    }
-
-    public void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.bottom_nav_fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
     }
 
 }

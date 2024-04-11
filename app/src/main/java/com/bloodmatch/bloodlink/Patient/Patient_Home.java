@@ -44,36 +44,36 @@ public class Patient_Home extends Fragment {
         locate = rootView.findViewById(R.id.locat);
         know = rootView.findViewById(R.id.knows);
         about = rootView.findViewById(R.id.abouts);
-
-        // Initialize the database reference
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        usersRef = database.getReference("Users").child("Patients");
-
-        // Get the current user's ID from Firebase Authentication
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String patientId = currentUser.getUid();
-
-            usersRef.child(patientId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String fname = dataSnapshot.child("firstname").getValue(String.class);
-                        String lname = dataSnapshot.child("lastname").getValue(String.class);
-
-                        String fullName = fname + " " + lname;
-                        nameEditText.setText(fullName);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            nameEditText.setText("User not authenticated");
-        }
+//
+//        // Initialize the database reference
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        usersRef = database.getReference("Patients");
+//
+//        // Get the current user's ID from Firebase Authentication
+//        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+//        if (currentUser != null) {
+//            String patientId = currentUser.getUid();
+//
+//            usersRef.child(patientId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.exists()) {
+//                        String fname = dataSnapshot.child("firstname").getValue(String.class);
+//                        String lname = dataSnapshot.child("lastname").getValue(String.class);
+//
+//                        String fullName = fname + " " + lname;
+//                        nameEditText.setText(fullName);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        } else {
+//            nameEditText.setText("User not authenticated");
+//        }
 
         findBloodMatch.setOnClickListener(new View.OnClickListener() {
             @Override

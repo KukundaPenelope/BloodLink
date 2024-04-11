@@ -21,6 +21,19 @@
         android:theme="@style/Theme.BloodLink"
         tools:targetApi="31">
         <activity
+            android:name=".Donor.Donor_Notifications"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.BloodInfo"
+            android:exported="false" />
+        <activity
+            android:name=".Patient.Settings"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Patient.Profile"
+            android:exported="false" />
+        <activity
             android:name=".BloodBank.BloodBank_Signup"
             android:exported="false" />
         <activity

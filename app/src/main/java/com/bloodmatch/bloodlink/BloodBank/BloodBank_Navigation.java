@@ -22,6 +22,7 @@ import com.bloodmatch.bloodlink.Patient.LocateBloodBanksFragment;
 import com.bloodmatch.bloodlink.Patient.PatientAccount;
 import com.bloodmatch.bloodlink.Patient.PatientNotifications;
 import com.bloodmatch.bloodlink.Patient.Patient_Home;
+import com.bloodmatch.bloodlink.Patient.Profile2;
 import com.bloodmatch.bloodlink.R;
 import com.bloodmatch.bloodlink.databinding.ActivityBloodBankNavigationBinding;
 //import com.bloodmatch.bloodlink.databinding.ActivityBloodbankSignupBinding;
@@ -151,10 +152,8 @@ public class BloodBank_Navigation extends AppCompatActivity implements Navigatio
             showDrawerLayoutFragment(new Patient_Home());
         } else if (itemId == R.id.settings) {
             showDrawerLayoutFragment(new LocateBloodBanksFragment());
-
         } else if (itemId == R.id.prof) {
-            showDrawerLayoutFragment(new LocateBloodBanksFragment());
-
+            showDrawerLayoutFragment(new Profile2());
         } else if (itemId == R.id.nav_logoout) {
             // Create an AlertDialog to confirm logout
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
