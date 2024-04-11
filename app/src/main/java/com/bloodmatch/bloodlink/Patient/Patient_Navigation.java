@@ -182,13 +182,16 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
         if (itemId == R.id.home1) {
             showDrawerLayoutFragment(new Patient_Home());
         } else if (itemId == R.id.settings) {
-            showDrawerLayoutFragment(new LocateBloodBanksFragment());
+            showDrawerLayoutFragment(new PatientAccount());
 
         } else if (itemId == R.id.prof) {
             Intent intent = new Intent(Patient_Navigation.this, Profile.class);
             startActivity(intent);
 
-        } else if (itemId == R.id.nav_logoout) {
+        } else if (itemId == R.id.notification) {
+            showDrawerLayoutFragment(new PatientNotifications());
+        }
+        else if (itemId == R.id.nav_logoout) {
             // Create an AlertDialog to confirm logout
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Logout");

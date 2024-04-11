@@ -14,7 +14,10 @@
             android:id="@+id/prof"
             android:icon="@drawable/baseline_manage_accounts_24"
             android:title="My Profile" />
-
+        <item
+            android:id="@+id/notification"
+            android:icon="@drawable/baseline_notifications_24"
+            android:title="My Notifications" />
         <item
             android:id="@+id/settings"
             android:icon="@drawable/baseline_settings_24"

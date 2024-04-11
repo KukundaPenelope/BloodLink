@@ -1,5 +1,7 @@
 package com.bloodmatch.bloodlink.Donor;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -39,6 +42,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -218,6 +222,7 @@ public class Donor_SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            getFCMToken();
                             String donorId = firebaseAuth.getCurrentUser().getUid();
                             //store data
                             Donor donor = new Donor(donorId,firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, location, password);
@@ -228,6 +233,30 @@ public class Donor_SignUp extends AppCompatActivity {
                             finish();
                         } else {
                             Toast.makeText(Donor_SignUp.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+    private void getFCMToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get the FCM token
+                        String fcmToken = task.getResult();
+
+
+
+                        Log.d(TAG, "FCM token: " + fcmToken);
+                        // Store the FCM token in the database under the professional's UID
+                        if (firebaseAuth.getCurrentUser() != null) {
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            databaseReference.child(uid).child("fcmToken").setValue(fcmToken);
                         }
                     }
                 });

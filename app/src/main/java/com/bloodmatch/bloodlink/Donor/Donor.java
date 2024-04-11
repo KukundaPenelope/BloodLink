@@ -1,7 +1,7 @@
 package com.bloodmatch.bloodlink.Donor;
 
 public class Donor {
-    private String uid, firstName, lastName, age, gender,bloodGroup, email, phoneNumber, dob, location, password;
+    private String uid, firstName, lastName, age, gender,bloodGroup, email, phoneNumber, dob, location, password, fcmToken;
 
     public Donor() {
     }
@@ -106,5 +106,10 @@ public class Donor {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    public String getFcmToken() {
+        return fcmToken;
     }
 }

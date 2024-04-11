@@ -1,5 +1,6 @@
 package com.bloodmatch.bloodlink.Donor;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,10 +12,13 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.bloodmatch.bloodlink.Patient.Request;
 import com.bloodmatch.bloodlink.Patient.RequestManager;
 import com.bloodmatch.bloodlink.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +40,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
     private Toolbar backTool;
 
     DatabaseReference donorsRef;
+    DatabaseReference requestsRef; // Reference for "Requests" node
     RequestManager requestManager = new RequestManager();
 
 
@@ -46,6 +51,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
 
         // Initialize Firebase Realtime Database reference
         donorsRef = FirebaseDatabase.getInstance().getReference("Donors");
+        requestsRef = FirebaseDatabase.getInstance().getReference("Requests"); // Initialize reference for "Requests" node
 
         // Initialize UI elements
         searchEditText = findViewById(R.id.searchEditText);
@@ -72,7 +78,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
         donorList = new ArrayList<>();
 
         // Create and set the adapter
-        donorAdapter = new BloodDonorAdapter(donorList);
+        donorAdapter = new BloodDonorAdapter(donorList, this);
         recyclerView.setAdapter(donorAdapter);
 
         // Set a text watcher for the search EditText
@@ -147,19 +153,43 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
             }
         });
     }
-@Override
+
+    @Override
     public void onRequestClick(Donor donor) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String patientId = currentUser.getUid();
-            Request request = new Request();
-            request.setDonorId(donor.getUid());
-            request.setPatientId(patientId);
-            request.setRequestTime(Calendar.getInstance().getTime().toString());
+            String donorId = donor.getUid();
+            String requestTime = Calendar.getInstance().getTime().toString();
+            String fcmToken = donor.getFcmToken(); // Get FCM token from donor
 
-            requestManager.saveRequest(request);
+            // Create a unique key for the request
+            String requestId = requestsRef.push().getKey();
+
+            // Create a new Request object
+            Request request = new Request(requestId, donorId, patientId, requestTime, fcmToken, "Pending"); // Set request status to "Pending"
+
+            // Save the request to the database
+            requestsRef.child(requestId).setValue(request)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Request saved successfully
+                            // Display a success message
+                            Toast.makeText(LocateBloodDonors.this, "Request sent successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Error occurred while saving the request
+                            // Handle the error
+                            Toast.makeText(LocateBloodDonors.this, "Failed to send request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
+
     @Override
     public void onBackPressed() {
         // Navigate back to the previous activity

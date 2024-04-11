@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.bloodmatch.bloodlink.Patient.CancelledNotificationsFragment;
 import com.bloodmatch.bloodlink.Patient.New_Notifications;
 import com.bloodmatch.bloodlink.Patient.NotificationType;
 
@@ -30,7 +29,7 @@ public class DonorNotificationsPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return ApprovedNotificationsFragment.newInstance();
             case 2:
-                return CancelledNotificationsFragment.newInstance();
+                return com.bloodmatch.bloodlink.Donor.CancelledNotificationsFragment.newInstance();
             default:
                 return null;
         }

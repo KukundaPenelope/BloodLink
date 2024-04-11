@@ -29,6 +29,7 @@ import com.bloodmatch.bloodlink.R;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Random;
 
 public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.ViewHolder> {
     private List<Donor> donorList;
@@ -36,8 +37,12 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
-    public BloodDonorAdapter(List<Donor> donorList) {
+    private OnRequestClickListener onRequestClickListener; // Listener variable
+
+    // Constructor with listener parameter
+    public BloodDonorAdapter(List<Donor> donorList, OnRequestClickListener onRequestClickListener) {
         this.donorList = donorList;
+        this.onRequestClickListener = onRequestClickListener;
     }
 
     @NonNull
@@ -53,11 +58,15 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         Donor donor = donorList.get(position);
 
         // Set the donor information in the item layout
+        String donorName = "Donor " + (position + 1);
+        holder.nameTextView.setText(donorName);
+
+        // Set the donor information in the item layout
 //        holder.nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
-        holder.nameTextView.setText(donor.getUid());
+//        holder.nameTextView.setText(donor.getUid());
         holder.districtTextView.setText(donor.getLocation());
         String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
-        holder.contactTextView.setText(hashedPhoneNumber);
+        holder.contactTextView.setText(generatePseudoNumber());
 //        holder.contactTextView.setText(donor.getPhoneNumber());
         holder.bloodGroupText.setText(donor.getBloodGroup());
 
@@ -65,7 +74,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDonorPopup(donor);
+                showDonorPopup(donorName,donor);
             }
         });
     }
@@ -93,7 +102,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         }
     }
 
-    private void showDonorPopup(final Donor donor) {
+    private void showDonorPopup(final String donorName, Donor donor) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(R.layout.donor_dialog);
 
@@ -108,18 +117,23 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         LinearLayout requestLayout= dialog.findViewById(R.id.requestLayout);
 
 //        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
-        nameTextView.setText(donor.getUid());
+        nameTextView.setText(donorName);
         districtTextView.setText(donor.getLocation());
         // Hash the phone number before displaying it
         String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
-        contactTextView.setText(hashedPhoneNumber);
+        contactTextView.setText(generatePseudoNumber());
 
         final Donor finalDonor = donor; // Create a final variable to capture the donor object
+
+        // Set click listener for the request layout
         requestLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement your logic to send a request to the donor
-//                sendRequestToDonor(donor);
+                // Check if the context implements the OnRequestClickListener interface
+                if (context instanceof OnRequestClickListener) {
+                    // Call the onRequestClick method of the context
+                    ((OnRequestClickListener) context).onRequestClick(finalDonor);
+                }
                 dialog.dismiss();
             }
         });
@@ -141,12 +155,6 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         });
 
 
-        requestLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         locateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +186,13 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         });
 
 
+    }
+    // Method to generate pseudo number
+    private String generatePseudoNumber() {
+        // Generate a random 4-digit number
+        Random random = new Random();
+        int pseudoNumber = random.nextInt(9000) + 1000;
+        return String.valueOf(pseudoNumber);
     }
 
 // Method to hash the phone number

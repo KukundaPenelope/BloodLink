@@ -49,6 +49,7 @@
                 android:layout_toRightOf="@id/profileCircleImageView"/>
 
             <ImageView
+                android:id="@+id/editProfile"
                 style="@style/viewParent"
                 android:src="@drawable/ic_more"
                 android:layout_alignParentRight="true"
@@ -62,20 +63,20 @@
             android:drawableLeft="@drawable/ic_dark_mode"
             android:text="Dark Mode" />
 
-        <TextView
-            style="@style/viewParent.headerText.settingsMiniTitle"
-            android:text="Profile"/>
+<!--        <TextView-->
+<!--            style="@style/viewParent.headerText.settingsMiniTitle"-->
+<!--            android:text="Profile"/>-->
 
-        <TextView
-            style="@style/viewParent.headerText.settingsTextIcon"
-            android:drawableLeft="@drawable/ic_edit_profile"
-            android:text="Edit Profile" />
+<!--        <TextView-->
+<!--            style="@style/viewParent.headerText.settingsTextIcon"-->
+<!--            android:drawableLeft="@drawable/ic_edit_profile"-->
+<!--            android:text="Edit Profile" />-->
 
-        <TextView
-            style="@style/viewParent.headerText.settingsTextIcon"
-            android:drawableLeft="@drawable/ic_edit_password"
-            android:layout_marginTop="10dp"
-            android:text="Change Password" />
+<!--        <TextView-->
+<!--            style="@style/viewParent.headerText.settingsTextIcon"-->
+<!--            android:drawableLeft="@drawable/ic_edit_password"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:text="Change Password" />-->
 
         <TextView
             style="@style/viewParent.headerText.settingsMiniTitle"
@@ -97,6 +98,7 @@
             android:text="Language" />
 
         <TextView
+            android:id="@+id/logout"
             style="@style/viewParent.headerText.settingsTextIcon"
             android:drawableLeft="@drawable/ic_logout"
             android:text="Logout" />

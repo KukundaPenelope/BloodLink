@@ -28,32 +28,25 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApprovedNotificationsFragment extends Fragment {
+public class CancelledNotificationsFragment extends Fragment {
 
     private TextView noRequestsTextView;
     private RecyclerView recyclerView;
     private RecieveRequestsAdapter adapter;
     private List<Request> requestList;
     private DatabaseReference requestsRef;
-    private List<Request> approvedRequests;
+    private List<Request> cancelledRequest;
 
 
-    // Other necessary variables and methods
-
-    public void addRequest(Request request) {
-        approvedRequests.add(request);
-        adapter.notifyDataSetChanged();
-    }
-
-    public static ApprovedNotificationsFragment newInstance() {
-        return new ApprovedNotificationsFragment();
+    public static CancelledNotificationsFragment newInstance() {
+        return new CancelledNotificationsFragment();
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_approved_notifications, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_cancelled_notifications2, container, false);
 
         noRequestsTextView = rootView.findViewById(R.id.noRequestsTextView);
         recyclerView = rootView.findViewById(R.id.requestsRecyclerView);
@@ -74,7 +67,7 @@ public class ApprovedNotificationsFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Request request = snapshot.getValue(Request.class);
                         if (request != null) {
-                            if ("Approved".equals(request.getRequestStatus())) {
+                            if ("Cancelled".equals(request.getRequestStatus())) {
                                 requestList.add(request);
                             }
                         }
@@ -96,4 +89,10 @@ public class ApprovedNotificationsFragment extends Fragment {
 
         return rootView;
     }
+
+    public void addRequest(Request request) {
+        cancelledRequest.add(request);
+        adapter.notifyDataSetChanged();
+    }
+
 }

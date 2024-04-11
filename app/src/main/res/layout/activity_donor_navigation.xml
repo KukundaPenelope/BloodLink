@@ -219,6 +219,7 @@
                         android:src="@drawable/baseline_info_24"/>
 
                     <TextView
+                        android:id="@+id/aboutdon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="About Donation"

@@ -8,7 +8,7 @@ public class RequestManager {
 
     public RequestManager() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        requestsRef = database.getReference("requests");
+        requestsRef = database.getReference("Requests");
     }
 
     public void saveRequest(Request request) {

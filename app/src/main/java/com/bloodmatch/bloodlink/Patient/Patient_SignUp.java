@@ -1,5 +1,7 @@
 package com.bloodmatch.bloodlink.Patient;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,6 +42,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.hbb20.CountryCodePicker;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.appcompat.widget.AppCompatDrawableManager;
@@ -213,6 +217,7 @@ public class Patient_SignUp extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
+                                                getFCMToken();
                                                 String patientId = firebaseAuth.getCurrentUser().getUid();
                                                     //store data
                                                 Patient patient = new Patient(patientId,firstName, lastName, age, gender, bloodGroup,email, phoneNumber, dob, location, password);
@@ -227,6 +232,30 @@ public class Patient_SignUp extends AppCompatActivity {
                                         }
                                     });
                         }
+    private void getFCMToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get the FCM token
+                        String fcmToken = task.getResult();
+
+
+
+                        Log.d(TAG, "FCM token: " + fcmToken);
+                        // Store the FCM token in the database under the professional's UID
+                        if (firebaseAuth.getCurrentUser() != null) {
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            databaseReference.child(uid).child("fcmToken").setValue(fcmToken);
+                        }
+                    }
+                });
+    }
 
     }
 
