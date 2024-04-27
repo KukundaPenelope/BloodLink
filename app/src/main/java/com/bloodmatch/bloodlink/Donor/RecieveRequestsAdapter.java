@@ -38,7 +38,6 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Request request = requests.get(position);
         // Bind data to views in ViewHolder
         holder.requestIdTextView.setText(request.getRequest_id());
@@ -97,7 +96,6 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
             super(itemView);
             // Initialize views here
             requestIdTextView = itemView.findViewById(R.id.requestIdTextView);
-            requestName = itemView.findViewById(R.id.donorNameTextView);
             locationTextView = itemView.findViewById(R.id.locationTextView);
             donorGroup = itemView.findViewById(R.id.bloodGroupText);
             requestTimeTextView = itemView.findViewById(R.id.requestTimeTextView);

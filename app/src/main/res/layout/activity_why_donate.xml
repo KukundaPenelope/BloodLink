@@ -4,6 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F7F7F7"
     tools:context=".Patient.WhyDonateActivity">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Why Donate?"
+        android:textSize="24sp"
+        android:textColor="#333333"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tvExplanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="By donating, you can make a significant impact on the lives of those in need. Here are a few reasons why donating is important:\n\n1. Help Save Lives: Your donation can help save lives and improve the health of individuals who are in critical need of medical treatment.\n\n2. Make a Difference: Donating gives you the power to make a positive difference in someone's life. Your contribution can bring hope and happiness to those who are suffering.\n\n3. Support Research and Development: Donations play a crucial role in funding medical research and development, leading to advancements in treatments and cures for various diseases.\n\n4. Foster a Stronger Community: By donating, you contribute to building a stronger and more compassionate community that cares for its members.\n\nThank you for considering donation!"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

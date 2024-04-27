@@ -57,11 +57,11 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
                             // Set donor data to the views in ViewHolder
 //                            holder.donorNameTextView.setText(name);
-                            holder.donorGroup.setText(blood_group);
+                            holder.donorGroup.setText(bloodGroup);
 //                            holder.locationTextView.setText(location);
                             // Set the donor information in the item layout
                             String donorName = "Donor " + (position + 1);
-                            holder.donorNameTextView.setText(donorName);
+                            holder.requestIdTextView.setText(donorName);
                             holder.requestTimeTextView.setText(request.getRequest_time());
                             holder.requestStatusTextView.setText(request.getStatus());
                         } else {

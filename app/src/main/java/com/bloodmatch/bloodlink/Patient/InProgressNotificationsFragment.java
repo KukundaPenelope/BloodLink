@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InProgressNotificationsFragment extends Fragment {
+    private TextView noRequestsTextView;
 
     private RecyclerView recyclerView;
     private RequestAdapter adapter;
@@ -40,6 +42,8 @@ public class InProgressNotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_in_progress_notifications, container, false);
+        noRequestsTextView = view.findViewById(R.id.noRequestsTextView);
+
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RequestAdapter(new ArrayList<>());
@@ -78,6 +82,11 @@ public class InProgressNotificationsFragment extends Fragment {
                                         }
                                         // Update the adapter with the retrieved requests
                                         adapter.setRequests(requests);
+                                        if (requests.isEmpty()) {
+                                            noRequestsTextView.setVisibility(View.VISIBLE);
+                                        } else {
+                                            noRequestsTextView.setVisibility(View.GONE);
+                                        }
                                     } else {
                                         // Handle query failure
                                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -85,5 +94,8 @@ public class InProgressNotificationsFragment extends Fragment {
                                 });
                     }
                 });
+    }
+    public void addRequest(Request request) {
+        // Not required in Firestore as it automatically updates in real-time
     }
 }
