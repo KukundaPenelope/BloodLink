@@ -22,17 +22,17 @@ import com.bloodmatch.bloodlink.databinding.ActivityPatientNavigationBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class Patient_Navigation extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     ActivityPatientNavigationBinding binding;
     private DrawerLayout drawerLayout;
     Toolbar bar;
-    private DatabaseReference usersRef;
+    private FirebaseFirestore db;
+    private FirebaseAuth firebaseAuth;
+    private ListenerRegistration userDataListener;
 
     ActionBarDrawerToggle toggle;
     MenuItem selectedDrawerItem = null;
@@ -53,40 +53,33 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        db = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+
         // Get the header view of the navigation drawer
         View headerView = navigationView.getHeaderView(0);
-
         TextView userNameTextView = headerView.findViewById(R.id.userNameTextView);
-        // Initialize the database reference
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        usersRef = database.getReference("Patients");
 
-// Get the current user's ID from Firebase Authentication
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            String patientId = currentUser.getUid();
+            String userId = currentUser.getUid();
 
-            usersRef.child(patientId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String fname = dataSnapshot.child("email").getValue(String.class);
-//                        String lname = dataSnapshot.child("lastname").getValue(String.class);
-
-//                        String fullName = fname + " " + lname;
-                        userNameTextView.setText(fname);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(Patient_Navigation.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            userNameTextView.setText("User not authenticated");
+            // Retrieve the patient document based on the user ID
+            db.collection("patients").whereEqualTo("user_id", userId).get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot patientSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            String patientId = patientSnapshot.getId(); // Get the document ID as the patient ID
+                            String fname = patientSnapshot.getString("email"); // Assuming "email" is the field storing user's name
+                            userNameTextView.setText(fname);
+                        } else {
+                            userNameTextView.setText("User not authenticated");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
+                    });
         }
-
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemID = item.getItemId();
@@ -200,6 +193,7 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
             // Add positive button - user confirms logout
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+                firebaseAuth.signOut(); // Sign out the user
                 Intent intent = new Intent(this, MainActivity3.class);
                 startActivity(intent);
                 finish();
@@ -227,4 +221,11 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (userDataListener != null) {
+            userDataListener.remove(); // Remove the listener to avoid memory leaks
+        }
+    }
 }

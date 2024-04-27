@@ -1,22 +1,61 @@
 {
   "bloodbanks": [
     {
-      "name": "MBARARA REGIONAL BLOOD BANK",
-      "district": "Mbarara",
       "address": "9JPV+JMP, Mbarara",
-      "contact": "0483 22104"
+      "contact": "0483 22104",
+      "district": "Mbarara",
+      "email": "mbarararegionalbb@gmail.com",
+      "name": "MBARARA REGIONAL BLOOD BANK",
+      "password": "MbararaRegional",
+      "uid": "S0p4H82o3pQ5bxkEW6YjHj3TG3g1",
+      "bloodGroups": {
+        "A+": 100,
+        "B+": 150,
+        "AB+": 50,
+        "O+": 200,
+        "A-": 80,
+        "B-": 120,
+        "AB-": 40,
+        "O-": 180
+      }
     },
     {
-      "name": "ARUA REGIONAL BLOOD BANK",
-      "district": "Arua",
       "address": "Arua Regional Referal Hospital,Avenue Road Arua",
-      "contact": "0476420080"
+      "contact": "0476420080",
+      "district": "Arua",
+      "email": "aruaregional@gmail.com",
+      "name": "ARUA REGIONAL BLOOD BANK",
+      "password": "ARRH",
+      "bloodGroups": {
+        "A+": 120,
+        "B+": 100,
+        "AB+": 70,
+        "O+": 180,
+        "A-": 90,
+        "B-": 80,
+        "AB-": 30,
+        "O-": 150
+      }
     },
     {
-    "name": "NAKASERO BLOOD BANK",
-    "district": "Kampala",
-    "address": "Nakasero Hill Rd, Kampala",
-    "contact": "0483 22104"
+      "address": "Nakasero Hill Rd, Kampala",
+      "contact": "0483 22104",
+      "district": "Kampala",
+      "email": "nakaserobloodbank@gmail.com",
+      "name": "NAKASERO BLOOD BANK",
+      "password": "NHRK",
+      "bloodGroups": {
+        "A+": 189,
+        "B+": 200,
+        "AB+": 20,
+        "O+": 200,
+        "A-": 50,
+        "B-": 80,
+        "AB-": 40,
+        "O-": 100
+      }
     }
   ]
 }
+
+      

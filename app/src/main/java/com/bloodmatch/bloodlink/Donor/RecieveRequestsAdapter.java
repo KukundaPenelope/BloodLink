@@ -12,20 +12,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bloodmatch.bloodlink.Patient.Patient;
 import com.bloodmatch.bloodlink.Patient.Request;
 import com.bloodmatch.bloodlink.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequestsAdapter.ViewHolder> {
 
     private List<Request> requests;
+    FirebaseFirestore db;
+
+    private ViewHolder holder;
 
     public RecieveRequestsAdapter(List<Request> requests) {
         this.requests = requests;
+        this.db = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -37,48 +38,45 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         Request request = requests.get(position);
         // Bind data to views in ViewHolder
-        holder.requestIdTextView.setText(request.getRequestId());
-        DatabaseReference patientsRef = FirebaseDatabase.getInstance().getReference("Patients");
-        patientsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Patient patient = snapshot.getValue(Patient.class);
-                    if (patient != null) {
-                        // Retrieve patient attributes
-                        String firstName = patient.getFirstName();
-                        String lastName = patient.getLastName();
-                        String fullName = firstName + " " + lastName;
-                        String bloodGroup = patient.getBloodGroup();
+        holder.requestIdTextView.setText(request.getRequest_id());
+        holder.requestTimeTextView.setText(request.getRequest_time());
+        holder.requestStatusTextView.setText(request.getStatus());
+        // Add click listeners or any other UI interactions if needed
 
-                        // Set data to the views in ViewHolder
-                        holder.requestName.setText(fullName);
-                        holder.donorGroup.setText(bloodGroup);
-                    }
+        // Retrieve patient details based on the patientId in the request
+        db.collection("patients").document(request.getPatient_id()).get()
+                .addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+//                Patient patient = task.toObject(Patient.class);
+                Patient patient = documentSnapshot.toObject(Patient.class);
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    // Retrieve patient attributes
+                    String firstName = patient.getFirst_name();
+                    String lastName = patient.getLast_name();
+                    String fullName = firstName + " " + lastName;
+                    String bloodGroup = patient.getBlood_type();
+                    String location = documentSnapshot.getString("hospital");
+                    // Set patient details to the views in ViewHolder
+                    holder.requestName.setText(fullName);
+                    holder.donorGroup.setText(bloodGroup);
+                    holder.locationTextView.setText(location);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Show the dialog fragment
+                            ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request, position);
+                            dialogFragment.show(((AppCompatActivity) holder.itemView.getContext()).getSupportFragmentManager(), "ApprovalDialogFragment");
+                        }
+                    });
+
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
-            }
-        });
-
-        // Set the donor information in the item layout
-        holder.requestTimeTextView.setText(request.getRequestTime());
-        holder.requestStatusTextView.setText(request.getRequestStatus());
-        // Add click listeners or any other UI interactions if needed
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Show the dialog fragment
-                ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request, position);
-
-
-                dialogFragment.show(((AppCompatActivity) holder.itemView.getContext()).getSupportFragmentManager(), "ApprovalDialogFragment");
-            }
+        }).addOnFailureListener(e -> {
+            // Handle failure
         });
     }
 
@@ -89,7 +87,7 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Declare views here
-        TextView requestIdTextView;
+        TextView requestIdTextView,locationTextView;
         TextView donorGroup;
         TextView requestName;
         TextView requestTimeTextView;
@@ -100,6 +98,7 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
             // Initialize views here
             requestIdTextView = itemView.findViewById(R.id.requestIdTextView);
             requestName = itemView.findViewById(R.id.donorNameTextView);
+            locationTextView = itemView.findViewById(R.id.locationTextView);
             donorGroup = itemView.findViewById(R.id.bloodGroupText);
             requestTimeTextView = itemView.findViewById(R.id.requestTimeTextView);
             requestStatusTextView = itemView.findViewById(R.id.requestStatusTextView);

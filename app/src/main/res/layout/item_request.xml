@@ -41,6 +41,13 @@
             android:paddingBottom="4dp"/>
 
         <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Location: Mbarara"
+            android:paddingBottom="4dp"/>
+        <TextView
             android:id="@+id/requestStatusTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

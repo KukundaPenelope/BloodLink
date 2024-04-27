@@ -156,7 +156,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/knows"
+            android:id="@+id/bloodmatch"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_row="1"
@@ -183,14 +183,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Know Your"
+                    android:text="Find a "
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textSize="18sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Blood Group"
+                    android:text="Blood Match"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textSize="18sp" />

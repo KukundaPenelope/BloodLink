@@ -1,17 +1,9 @@
 package com.bloodmatch.bloodlink.Donor;
 
-import static android.content.ContentValues.TAG;
-
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,95 +15,92 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.bloodmatch.bloodlink.MainActivity;
-import com.bloodmatch.bloodlink.MainActivity2;
 import com.bloodmatch.bloodlink.MainActivity3;
-import com.bloodmatch.bloodlink.Patient.Patient;
-import com.bloodmatch.bloodlink.Patient.Patient_SignUp;
 import com.bloodmatch.bloodlink.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 public class Donor_SignUp extends AppCompatActivity {
 
+    private static final String TAG = "Donor_SignUp";
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference donorCollection = db.collection("donors");
+    private CollectionReference usersCollection = db.collection("users");
     private EditText firstNameEditText;
     private EditText lastNameEditText;
     private EditText ageEditText;
-    private Spinner genderEditText,bloodG;
-    private EditText emailEditText;
-    private EditText phoneholder;
+    private Spinner genderSpinner;
+    private Spinner bloodGroupSpinner;
+    private Spinner bloodBankSpinner;
+    private FirebaseAuth firebaseAuth;
     private EditText dobEditText;
-    private EditText locationEditText;
-    private EditText passwordEditText;
-
-    private DatabaseReference databaseReference;
-    FirebaseAuth firebaseAuth;
-
-
-    private static final int PERMISSION_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_patient_sign_up);
-        firebaseAuth=FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Donors");
+        setContentView(R.layout.activity_donor_sign_up);
 
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         ageEditText = findViewById(R.id.ageEditText);
-        genderEditText = findViewById(R.id.genderEditText);
-        bloodG=findViewById(R.id.bloodGroupEditText);
+        genderSpinner = findViewById(R.id.genderSpinner);
+        bloodGroupSpinner = findViewById(R.id.bloodGroupEditText);
+        firebaseAuth = FirebaseAuth.getInstance();
 
         ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this, R.array.gender_array, android.R.layout.simple_spinner_item);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderEditText.setAdapter(adapter3);
-        ArrayAdapter<CharSequence> adapter4= ArrayAdapter.createFromResource(this, R.array.bloodg_array, android.R.layout.simple_spinner_item);
+        genderSpinner.setAdapter(adapter3);
+        ArrayAdapter<CharSequence> adapter4 = ArrayAdapter.createFromResource(this, R.array.bloodg_array, android.R.layout.simple_spinner_item);
         adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bloodG.setAdapter(adapter4);
-        Button signUpButton = findViewById(R.id.sign_up);
+        bloodGroupSpinner.setAdapter(adapter4);
+
+        Button signUpButton = findViewById(R.id.proceed);
         signUpButton.setOnClickListener(new View.OnClickListener() {
-
-
-
-
-
             @Override
-
             public void onClick(View v) {
-                String firstName = firstNameEditText.getText().toString().trim();
-                String lastName = lastNameEditText.getText().toString().trim();
-                String age = ageEditText.getText().toString().trim();
-                String gender = genderEditText.getSelectedItem().toString().trim();
-
-                if (firstName.isEmpty() || lastName.isEmpty() || age.isEmpty() || gender.isEmpty()) {
-                    Toast.makeText(Donor_SignUp.this, "Please fill in all the required fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    showPopupForm();
-                }
+                signUp();
             }
         });
     }
 
-    private void showPopupForm() {
-        View dialogView = getLayoutInflater().inflate(R.layout.pop_up, null);
+    private void signUp() {
+        String firstName = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String age = ageEditText.getText().toString().trim();
+        String gender = genderSpinner.getSelectedItem().toString();
+        String bloodGroup = bloodGroupSpinner.getSelectedItem().toString();
+
+        if (firstName.isEmpty() || lastName.isEmpty() || age.isEmpty()) {
+            Toast.makeText(Donor_SignUp.this, "Please fill in all the required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Show dialog for additional patient info
+        showPopupForm(firstName, lastName, age, gender, bloodGroup);
+    }
+
+    private void showPopupForm(String firstName, String lastName, String age, String gender, String bloodGroup) {
+        View dialogView = getLayoutInflater().inflate(R.layout.donor_popup, null);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
@@ -120,53 +109,67 @@ public class Donor_SignUp extends AppCompatActivity {
         final AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
-        emailEditText = dialogView.findViewById(R.id.emailEditText);
-        phoneholder = dialogView.findViewById(R.id.phoneholder);
+        EditText emailEditText = dialogView.findViewById(R.id.emailEditText);
+        EditText phoneEditText = dialogView.findViewById(R.id.phoneholder);
         dobEditText = dialogView.findViewById(R.id.dobEditText);
-        locationEditText = dialogView.findViewById(R.id.locationEditText);
-        passwordEditText = dialogView.findViewById(R.id.passwordEditText);
+        EditText passwordEditText = dialogView.findViewById(R.id.passwordEditText);
+        Button submitButton = dialogView.findViewById(R.id.submitButton);
+        bloodBankSpinner = dialog.findViewById(R.id.bloodBankA);
 
-
+        fetchBloodBanks();
         dobEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePicker();
             }
         });
-
-        locationEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(Donor_SignUp.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Donor_SignUp.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-                } else {
-                    fetchLocation();
-                }
-            }
-        });
-
-        Button submitButton = dialogView.findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString().trim();
-                String phoneNumber = phoneholder.getText().toString().trim();
+                String phoneNumber = phoneEditText.getText().toString().trim();
                 String dob = dobEditText.getText().toString().trim();
-                String location = locationEditText.getText().toString().trim();
+                String hospital = bloodBankSpinner.getSelectedItem().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (email.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || location.isEmpty() || password.isEmpty()) {
+                if (email.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || hospital.isEmpty() || password.isEmpty()) {
                     Toast.makeText(Donor_SignUp.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    saveToFirebase(email, phoneNumber, dob, location, password);
+                    signUpPatient(firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, hospital, password);
                     dialog.dismiss();
-                    finish();
-                    startActivity(new Intent(Donor_SignUp.this, MainActivity3.class));
                 }
             }
         });
     }
 
+    private void fetchBloodBanks() {
+        CollectionReference hospitalsCollection = db.collection("blood_bank");
+        hospitalsCollection.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<String> hospitalNames = new ArrayList<>();
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    String bloodBankName = documentSnapshot.getString("name");
+                    // Check if the bloodbank name is not already in the list
+                    if (!hospitalNames.contains(bloodBankName)) {
+                        hospitalNames.add(bloodBankName);
+                    }
+                }
+                populateHospitalSpinner(hospitalNames);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error fetching bloodbanks: " + e.getMessage());
+            }
+        });
+    }
+
+    private void populateHospitalSpinner(List<String> hospitalNames) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, hospitalNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bloodBankSpinner.setAdapter(adapter);
+    }
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -184,81 +187,113 @@ public class Donor_SignUp extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void fetchLocation() {
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    Geocoder geocoder = new Geocoder(Donor_SignUp.this, Locale.getDefault());
-                    try {
-                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        if (addresses.size() > 0) {
-                            String addressLine = addresses.get(0).getAddressLine(0);
-                            locationEditText.setText(addressLine);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-
-    private void saveToFirebase(String email, String phoneNumber, String dob, String location, String password) {
-        String firstName = firstNameEditText.getText().toString().trim();
-        String lastName = lastNameEditText.getText().toString().trim();
-        String age = ageEditText.getText().toString().trim();
-        String gender = genderEditText.getSelectedItem().toString();
-        String bloodGroup=bloodG.getSelectedItem().toString().trim();
-        String Email= emailEditText.getText().toString().trim();
-        String psd=passwordEditText.getText().toString().trim();
-
-        firebaseAuth.createUserWithEmailAndPassword(Email, psd)
+    private void signUpPatient(String firstName, String lastName, String age, String gender, String bloodGroup, String email, String phoneNumber, String dob, String bloodBankName, String password) {
+        // Create a user with email and password authentication
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            getFCMToken();
-                            String donorId = firebaseAuth.getCurrentUser().getUid();
-                            //store data
-                            Donor donor = new Donor(donorId,firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, location, password);
-                            databaseReference.child(donorId).setValue(donor);
-                            Toast.makeText(Donor_SignUp.this, "Account Created.", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Donor_SignUp.this, MainActivity3.class);
-                            startActivity(intent);
-                            finish();
+                            // User creation successful, proceed with saving patient data
+                            String userId = firebaseAuth.getCurrentUser().getUid();
+                            db.collection("blood_bank")
+                                    .whereEqualTo("name", bloodBankName)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            if (!queryDocumentSnapshots.isEmpty()) {
+                                                DocumentSnapshot hospitalSnapshot = queryDocumentSnapshots.getDocuments().get(0); // Get the first hospital document
+                                                String hospitalId = hospitalSnapshot.getString("hospital_id");
+                                                Map<String, Object> donorData = new HashMap<>();
+                                                donorData.put("hospital_id", hospitalId); // Use the retrieved hospital ID
+                                                donorData.put("blood_type", bloodGroup);
+                                                String donorId = donorCollection.document().getId();
+                                                String createdDate = getCurrentDateTime();
+                                                donorData.put("created", createdDate);
+                                                donorData.put("created_by", email);
+                                                donorData.put("email", email);
+                                                donorData.put("emailVerified", false);
+                                                donorData.put("gender", gender);
+                                                donorData.put("name", firstName + " " + lastName);
+                                                donorData.put("age", age);
+                                                donorData.put("phone_number", phoneNumber);
+                                                donorData.put("dob", dob);
+                                                donorData.put("role", "donor");
+                                                donorData.put("donor_id",donorId);
+                                                donorData.put("user_id",userId);
+                                                donorCollection.document(donorId).set(donorData)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "Donor data added to Firestore successfully");
+
+                                                                // Save user data to "users" collection with same auto-generated document ID
+                                                                Map<String, Object> userData = new HashMap<>();
+                                                                userData.put("hospital_id", hospitalId); // Assuming not available for patients
+                                                                userData.put("blood_type", bloodGroup);
+                                                                String createdDate = getCurrentDateTime();
+                                                                userData.put("created", createdDate);
+                                                                userData.put("email", email);
+                                                                userData.put("name", firstName + " " + lastName);
+                                                                userData.put("role", "donor");
+                                                                userData.put("created_by", email);
+                                                                userData.put("user_id",userId);
+
+                                                                usersCollection.document().set(userData)
+                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void unused) {
+                                                                                Log.d(TAG, "User data added to Firestore successfully");
+
+                                                                                // Redirect to main activity or any other desired activity
+                                                                                startActivity(new Intent(Donor_SignUp.this, MainActivity3.class));
+                                                                                finish();
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.e(TAG, "Error adding user data to Firestore", e);
+                                                                                Toast.makeText(Donor_SignUp.this, "Error creating account: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.e(TAG, "Error adding donor data to Firestore", e);
+                                                                Toast.makeText(Donor_SignUp.this, "Error creating account: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                            } else {
+                                                // Hospital not found
+                                                Log.e(TAG, "BloodBank not found in Firestore");
+                                                Toast.makeText(Donor_SignUp.this, "Hospital not found", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e(TAG, "Error querying BloodBanks: " + e.getMessage());
+                                            Toast.makeText(Donor_SignUp.this, "Error querying hospitals: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         } else {
-                            Toast.makeText(Donor_SignUp.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            // User creation failed
+                            Log.e(TAG, "Error creating user: " + task.getException().getMessage());
+                            Toast.makeText(Donor_SignUp.this, "Error creating user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
-    private void getFCMToken() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        // Get the FCM token
-                        String fcmToken = task.getResult();
-
-
-
-                        Log.d(TAG, "FCM token: " + fcmToken);
-                        // Store the FCM token in the database under the professional's UID
-                        if (firebaseAuth.getCurrentUser() != null) {
-                            String uid = firebaseAuth.getCurrentUser().getUid();
-                            databaseReference.child(uid).child("fcmToken").setValue(fcmToken);
-                        }
-                    }
-                });
+    // Define the getCurrentDateTime method in your class
+    private String getCurrentDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        return sdf.format(new Date());
     }
+
 }
+

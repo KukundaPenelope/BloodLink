@@ -16,4 +16,13 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical" />
 
+    <TextView
+        android:id="@+id/noRequestsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No new requests"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
 </RelativeLayout>

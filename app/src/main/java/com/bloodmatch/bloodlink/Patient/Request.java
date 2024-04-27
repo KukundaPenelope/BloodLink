@@ -1,31 +1,32 @@
 package com.bloodmatch.bloodlink.Patient;
 
 public class Request {
-    private String requestId;
+    private String request_id;
     private String donorId;
-    private String patientId;
-    private String requestTime;
-    private String fcmToken; // FCM token field
-    private String requestStatus; // Request status field
+    private String patient_id;
+    private String request_time;
+    private String fcmToken;
+    private String status;
+    private String updated;
 
     public Request() {
     }
 
-    public Request(String requestId, String donorId, String patientId, String requestTime, String fcmToken, String requestStatus) {
-        this.requestId = requestId;
+    public Request(String request_id, String donorId, String patient_id, String request_time, String fcmToken, String status) {
+        this.request_id = request_id;
         this.donorId = donorId;
-        this.patientId = patientId;
-        this.requestTime = requestTime;
+        this.patient_id = patient_id;
+        this.request_time = request_time;
         this.fcmToken = fcmToken;
-        this.requestStatus = requestStatus;
+        this.status = status;
     }
 
-    public String getRequestId() {
-        return requestId;
+    public String getRequest_id() {
+        return request_id;
     }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
+    public void setRequest_id(String request_id) {
+        this.request_id = request_id;
     }
 
     public String getDonorId() {
@@ -36,20 +37,20 @@ public class Request {
         this.donorId = donorId;
     }
 
-    public String getPatientId() {
-        return patientId;
+    public String getPatient_id() {
+        return patient_id;
     }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
+    public void setPatient_id(String patient_id) {
+        this.patient_id = patient_id;
     }
 
-    public String getRequestTime() {
-        return requestTime;
+    public String getRequest_time() {
+        return request_time;
     }
 
-    public void setRequestTime(String requestTime) {
-        this.requestTime = requestTime;
+    public void setRequest_time(String request_time) {
+        this.request_time = request_time;
     }
 
     public String getFcmToken() {
@@ -60,11 +61,19 @@ public class Request {
         this.fcmToken = fcmToken;
     }
 
-    public String getRequestStatus() {
-        return requestStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setRequestStatus(String requestStatus) {
-        this.requestStatus = requestStatus;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
     }
 }

@@ -70,7 +70,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="16dp">
             <TextView
-                android:id="@+id/bloodGroupText"
+                android:id="@+id/bloodGroupTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="0+"

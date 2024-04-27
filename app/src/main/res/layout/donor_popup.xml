@@ -97,16 +97,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location"
+        android:text="Blood bank affiliated to"
         android:textStyle="bold"
         android:layout_marginTop="16dp" />
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/locationEditText"
+        <Spinner
+            android:id="@+id/bloodBankA"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password -->

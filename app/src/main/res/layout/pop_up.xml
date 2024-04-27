@@ -96,20 +96,21 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <!-- Location -->
+    <!-- Hospital -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location"
+        android:text="Which hospital are you in?"
         android:textStyle="bold"
         android:layout_marginTop="16dp" />
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/locationEditText"
+        <Spinner
+            android:id="@+id/hospitalSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password -->

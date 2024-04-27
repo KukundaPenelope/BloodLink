@@ -35,9 +35,9 @@ public class AvailablePatientsAdapter extends RecyclerView.Adapter<AvailablePati
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Patient patient = filteredList.get(position);  // Get patient from filtered list
-        holder.nameTextView.setText(patient.getFirstName() + " " + patient.getLastName());
+        holder.nameTextView.setText(patient.getFirst_name() + " " + patient.getLast_name());
         holder.ageTextView.setText("Age: " + patient.getAge());
-        holder.bloodGroupTextView.setText("Blood Group: " + patient.getBloodGroup());
+        holder.bloodGroupTextView.setText("Blood Group: " + patient.getBlood_type());
         holder.districtTextView.setText("District: " + patient.getLocation());
     }
 
@@ -72,7 +72,7 @@ public class AvailablePatientsAdapter extends RecyclerView.Adapter<AvailablePati
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
             ageTextView = itemView.findViewById(R.id.ageTextView);
-            bloodGroupTextView = itemView.findViewById(R.id.bloodGroupEditText);
+            bloodGroupTextView = itemView.findViewById(R.id.bloodGroupTextView);
             districtTextView = itemView.findViewById(R.id.districtTextView);
         }
     }

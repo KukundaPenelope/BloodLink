@@ -144,7 +144,7 @@
                 android:textSize="20dp" />
 
             <Spinner
-                android:id="@+id/genderEditText"
+                android:id="@+id/genderSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ageEditText"

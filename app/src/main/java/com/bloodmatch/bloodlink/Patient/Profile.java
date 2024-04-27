@@ -1,5 +1,7 @@
 package com.bloodmatch.bloodlink.Patient;
 
+import static com.bloodmatch.bloodlink.Patient.Profile2.REQUEST_EXTERNAL_STORAGE_PERMISSION;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,11 +20,7 @@ import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Profile extends AppCompatActivity {
 
@@ -31,16 +28,13 @@ public class Profile extends AppCompatActivity {
     private EditText phoneEditText;
     private EditText emailEditText;
     private EditText passwordEditText;
-
     private EditText bloodGroup;
 
     private Button editBtn, logoutBtn, saveBtn;
 
-    private DatabaseReference dbRef;
     private FirebaseAuth mAuth;
-    private static final int REQUEST_EXTERNAL_STORAGE_PERMISSION = 123;
+    private FirebaseFirestore db;
     private Toolbar backTool;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +51,12 @@ public class Profile extends AppCompatActivity {
         saveBtn = findViewById(R.id.save);
         saveBtn.setVisibility(View.GONE);
         backTool = findViewById(R.id.profile_toolbar);
-        // Initialize the toolbar
+
+        // Initialize the Firebase instances
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // Set toolbar as support action bar
         setSupportActionBar(backTool);
 
         // Enable the back arrow
@@ -67,16 +66,11 @@ public class Profile extends AppCompatActivity {
         backTool.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle back arrow click
-                // You can use onBackPressed() or your custom logic here
                 onBackPressed();
             }
         });
 
-        // Initialize Firebase
-        mAuth = FirebaseAuth.getInstance();
-        dbRef = FirebaseDatabase.getInstance().getReference().child("Patients");
-
+        // Check for external storage permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE_PERMISSION);
         }
@@ -84,72 +78,21 @@ public class Profile extends AppCompatActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create an AlertDialog to confirm logout
-                AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this);
-                builder.setTitle("Logout");
-                builder.setMessage("Are you sure you want to logout?");
-
-                // Add positive button - user confirms logout
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Log out the current user
-                        FirebaseAuth.getInstance().signOut();
-
-                        // Clear the user session in shared preferences
-                        SharedPreferences sharedPreferences = getSharedPreferences("Patients", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.clear();
-                        editor.apply();
-
-                        // Navigate to the login activity
-                        Intent intent = new Intent(Profile.this, MainActivity3.class);
-                        startActivity(intent);
-                        finish();  // Close the current activity
-                    }
-                });
-
-                // Add negative button - user cancels logout
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Optionally handle cancel action
-                    }
-                });
-
-                // Show the AlertDialog
-                builder.show();
+                showLogoutDialog();
             }
         });
 
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Enable editing of EditText fields
-                nameEditText.setEnabled(true);
-                phoneEditText.setEnabled(true);
-                emailEditText.setEnabled(true);
-                passwordEditText.setEnabled(true);
-                bloodGroup.setEnabled(true);
-                // Switch button visibility
-                editBtn.setVisibility(View.GONE);
-                saveBtn.setVisibility(View.VISIBLE);
+                enableEditing();
             }
         });
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Disable editing
-                nameEditText.setEnabled(false);
-                phoneEditText.setEnabled(false);
-                emailEditText.setEnabled(false);
-                passwordEditText.setEnabled(false);
-                bloodGroup.setEnabled(false);
-                saveBtn.setVisibility(View.GONE);
-                editBtn.setVisibility(View.VISIBLE);
-
-                // Update the data in the database
+                disableEditing();
                 updateUserData(nameEditText.getText().toString(), phoneEditText.getText().toString());
             }
         });
@@ -162,51 +105,96 @@ public class Profile extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-            // Retrieve additional user details from the database
-            dbRef.orderByChild("email").equalTo(currentUser.getEmail())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    Patient patients = snapshot.getValue(Patient.class);
+            db.collection("patients").document(currentUser.getUid())
 
-                                    if (patients != null) {
-                                        // Fill the EditText fields with user data
-                                        String fullName = patients.getFirstName() + " " + patients.getLastName();
-                                        // Fill the EditText field with the concatenated name
-                                        nameEditText.setText(fullName);
-                                        phoneEditText.setText(patients.getPhoneNumber());
-                                        emailEditText.setText(patients.getEmail());
-                                        passwordEditText.setText(patients.getPassword());
-                                        bloodGroup.setText(patients.getBloodGroup());
-                                    }
-                                }
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Patient patient = documentSnapshot.toObject(Patient.class);
+
+                            if (patient != null) {
+                                String fullName = patient.getFirst_name() + " " + patient.getLast_name();
+                                nameEditText.setText(fullName);
+                                phoneEditText.setText(patient.getPhone_number());
+                                emailEditText.setText(patient.getEmail());
+                                passwordEditText.setText(patient.getPassword());
+                                bloodGroup.setText(patient.getBlood_type());
                             }
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // Handle errors
-                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle errors
                     });
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    private void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Logout");
+        builder.setMessage("Are you sure you want to logout?");
 
-        if (requestCode == REQUEST_EXTERNAL_STORAGE_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with image loading or any other functionality
-            } else {
-                // Permission denied, handle accordingly
-                // You may want to show a message to the user or disable functionality that requires this permission
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logoutUser();
             }
-        }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Cancel logout
+            }
+        });
+
+        builder.show();
+    }
+
+    private void logoutUser() {
+        FirebaseAuth.getInstance().signOut();
+        SharedPreferences sharedPreferences = getSharedPreferences("patients", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+        startActivity(new Intent(Profile.this, MainActivity3.class));
+        finish();
+    }
+
+    private void enableEditing() {
+        nameEditText.setEnabled(true);
+        phoneEditText.setEnabled(true);
+        emailEditText.setEnabled(true);
+        passwordEditText.setEnabled(true);
+        bloodGroup.setEnabled(true);
+        editBtn.setVisibility(View.GONE);
+        saveBtn.setVisibility(View.VISIBLE);
+    }
+
+    private void disableEditing() {
+        nameEditText.setEnabled(false);
+        phoneEditText.setEnabled(false);
+        emailEditText.setEnabled(false);
+        passwordEditText.setEnabled(false);
+        bloodGroup.setEnabled(false);
+        saveBtn.setVisibility(View.GONE);
+        editBtn.setVisibility(View.VISIBLE);
     }
 
     private void updateUserData(String name, String phone) {
-        // Implement your logic to update user data in the database
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            // Use the UID of the current user to update the corresponding document in the "Patients" collection
+            db.collection("patients").document(currentUser.getUid())
+                    .update("fullName", name,
+                            "phoneNumber", phone)
+                    .addOnSuccessListener(aVoid -> {
+                        // Data updated successfully
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle error
+                    });
+        }
     }
+
 }

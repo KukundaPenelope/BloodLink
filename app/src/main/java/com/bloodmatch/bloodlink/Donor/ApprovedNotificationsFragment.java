@@ -12,18 +12,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bloodmatch.bloodlink.Donor.RecieveRequestsAdapter;
+import com.bloodmatch.bloodlink.R;
 import com.bloodmatch.bloodlink.Patient.Request;
 import com.bloodmatch.bloodlink.Patient.RequestAdapter;
-import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,23 +29,14 @@ public class ApprovedNotificationsFragment extends Fragment {
 
     private TextView noRequestsTextView;
     private RecyclerView recyclerView;
-    private RecieveRequestsAdapter adapter;
+    private RequestAdapter adapter;
     private List<Request> requestList;
-    private DatabaseReference requestsRef;
-    private List<Request> approvedRequests;
 
-
-    // Other necessary variables and methods
-
-    public void addRequest(Request request) {
-        approvedRequests.add(request);
-        adapter.notifyDataSetChanged();
-    }
+    private FirebaseFirestore db;
 
     public static ApprovedNotificationsFragment newInstance() {
         return new ApprovedNotificationsFragment();
     }
-
 
     @Nullable
     @Override
@@ -59,41 +47,43 @@ public class ApprovedNotificationsFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.requestsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         requestList = new ArrayList<>();
-        adapter = new RecieveRequestsAdapter(requestList);
+        adapter = new RequestAdapter(requestList);
         recyclerView.setAdapter(adapter);
+
+        db = FirebaseFirestore.getInstance();
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String currentUserId = currentUser.getUid();
-            requestsRef = FirebaseDatabase.getInstance().getReference("Requests");
-            Query query = requestsRef.orderByChild("donorId").equalTo(currentUserId);
-            query.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    requestList.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Request request = snapshot.getValue(Request.class);
-                        if (request != null) {
-                            if ("Approved".equals(request.getRequestStatus())) {
+
+            // Query Firestore for approved requests for the current donor
+            db.collection("requests")
+                    .whereEqualTo("donorId", currentUserId)
+                    .whereEqualTo("requestStatus", "approved")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            requestList.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Request request = document.toObject(Request.class);
                                 requestList.add(request);
                             }
+                            adapter.notifyDataSetChanged();
+                            if (requestList.isEmpty()) {
+                                noRequestsTextView.setVisibility(View.VISIBLE);
+                            } else {
+                                noRequestsTextView.setVisibility(View.GONE);
+                            }
+                        } else {
+                            // Handle task failure
                         }
-                    }
-                    adapter.notifyDataSetChanged();
-                    if (requestList.isEmpty()) {
-                        noRequestsTextView.setVisibility(View.VISIBLE);
-                    } else {
-                        noRequestsTextView.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle database error
-                }
-            });
+                    });
         }
 
         return rootView;
+    }
+    public void addRequest(Request request) {
+        requestList.add(request);
+        adapter.notifyDataSetChanged();
     }
 }

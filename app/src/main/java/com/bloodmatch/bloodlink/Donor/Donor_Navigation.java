@@ -23,23 +23,19 @@ import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.Patient.AboutDonation;
 import com.bloodmatch.bloodlink.Patient.AvailablePatientsActivity;
 import com.bloodmatch.bloodlink.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Donor_Navigation extends AppCompatActivity {
-    private Spinner districtSpinner;
     private ArrayAdapter<String> districtAdapter;
     private List<String> districts;
-    private Spinner bloodGroupSpinner;
-    private DatabaseReference patientsRef;
-    private Button find;
     private TextView donation, viewRequests, aboutDonate;
     private ImageView logout, requestsView, about;
 
@@ -51,21 +47,17 @@ public class Donor_Navigation extends AppCompatActivity {
         districts = new ArrayList<>();
         districtAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, districts);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        districtSpinner = findViewById(R.id.districtEditText);
-        donation=findViewById(R.id.donation2);
-        viewRequests=findViewById(R.id.viewRequest);
-        requestsView=findViewById(R.id.requestView);
+        donation = findViewById(R.id.donation2);
+        viewRequests = findViewById(R.id.viewRequest);
+        requestsView = findViewById(R.id.requestView);
         ImageView donationSitesImageView = findViewById(R.id.donationSites);
         ImageView donorsProfileImageView = findViewById(R.id.donorsProfile);
         ImageView rewardsImageView = findViewById(R.id.rewards);
-        aboutDonate=findViewById(R.id.aboutdon);
-        about=findViewById(R.id.aboutDonation);
-        districtSpinner.setAdapter(districtAdapter);
-        districts.add("Select District");
-        districtAdapter.notifyDataSetChanged();
+        aboutDonate = findViewById(R.id.aboutdon);
+        about = findViewById(R.id.aboutDonation);
 
-        logout= findViewById(R.id.logout);
-//
+        logout = findViewById(R.id.logout);
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,95 +156,11 @@ public class Donor_Navigation extends AppCompatActivity {
             }
         });
 
-
-        find = findViewById(R.id.find_recipients_button);
-
-        find.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isSelectionValid()) {
-                    // Retrieve selected items from spinners
-                    String selectedDistrict = districtSpinner.getSelectedItem().toString();
-                    String selectedBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
-
-                    // Proceed to next activity
-                    Intent intent = new Intent(Donor_Navigation.this, AvailablePatientsActivity.class);
-                    intent.putExtra("location", selectedDistrict);
-                    intent.putExtra("bloodGroup", selectedBloodGroup);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(Donor_Navigation.this, "Please select both district and blood group", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-// Set up the blood group spinner with a prompt and placeholder
-        bloodGroupSpinner = findViewById(R.id.bloodGroupSpinner);
-        ArrayAdapter<CharSequence> bloodGroupAdapter = ArrayAdapter.createFromResource(this,
-                R.array.bloodg_array, android.R.layout.simple_spinner_item);
-        bloodGroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-// Create a new list with placeholder
-        List<CharSequence> bloodGroupList = new ArrayList<>();
-        bloodGroupList.add("Select Blood Group");
-        bloodGroupList.addAll(Arrays.asList(getResources().getStringArray(R.array.bloodg_array)));
-
-// Create a new ArrayAdapter with the updated list
-        ArrayAdapter<CharSequence> updatedBloodGroupAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, bloodGroupList);
-        updatedBloodGroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bloodGroupSpinner.setAdapter(updatedBloodGroupAdapter);
-
-// Set selection to the placeholder
-        bloodGroupSpinner.setSelection(0, false);
-
-
-        // Get a reference to the Firebase database
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        // Retrieve the patients node from the database
-        DatabaseReference patientsRef = database.child("Patients");
-
-        // Add a ValueEventListener to retrieve the patient data
-        patientsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                districts.clear(); // Clear existing districts (including placeholder)
-                districts.add("Select District");
-
-                // Iterate through the dataSnapshot to retrieve patient data
-                for (DataSnapshot patientSnapshot : dataSnapshot.getChildren()) {
-                    // Get the district property from each patient
-                    String district = patientSnapshot.child("location").getValue(String.class);
-
-                    // Add the district to the list if it is not null
-                    if (district != null) {
-                        districts.add(district);
-                    }
-                }
-
-                // Notify the adapter that the data set has changed
-                districtAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle any errors that occur during the data retrieval
-                Toast.makeText(Donor_Navigation.this, "Failed to retrieve districts", Toast.LENGTH_SHORT).show();
-            }
-        });
+    }
+        @Override
+        public void onBackPressed () {
+            // Navigate back to the previous activity
+            super.onBackPressed();
+        }
     }
 
-    // Method to check if selection in both spinners is valid
-    private boolean isSelectionValid() {
-        String selectedDistrict = districtSpinner.getSelectedItem().toString();
-        String selectedBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
-        return !TextUtils.isEmpty(selectedDistrict) && !selectedDistrict.equals("Select District") &&
-                !TextUtils.isEmpty(selectedBloodGroup) && !selectedBloodGroup.equals("Select Blood Group");
-    }
-    @Override
-    public void onBackPressed() {
-        // Navigate back to the previous activity
-        super.onBackPressed();
-    }
-}

@@ -41,7 +41,7 @@ public class Profile2 extends Fragment {
     private ImageView imageView;
     private DatabaseReference dbRef;
     private FirebaseAuth mAuth;
-    private static final int REQUEST_EXTERNAL_STORAGE_PERMISSION=123;
+    static final int REQUEST_EXTERNAL_STORAGE_PERMISSION=123;
 
     public Profile2() {
         // Required empty public constructor
@@ -164,8 +164,8 @@ public class Profile2 extends Fragment {
 
                                     if (patients != null) {
                                         // Fill the EditText fields with user data
-                                        nameEditText.setText(patients.getFirstName());
-                                        phoneEditText.setText(patients.getPhoneNumber());
+                                        nameEditText.setText(patients.getFirst_name());
+                                        phoneEditText.setText(patients.getPhone_number());
                                         emailEditText.setText(patients.getEmail());
                                         passwordEditText.setText(patients.getPassword());
 //

@@ -1,6 +1,12 @@
 package com.bloodmatch.bloodlink.Patient;
 
+import static com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,17 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class InProgressNotificationsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RequestAdapter adapter;
-    private DatabaseReference requestsRef;
+    private FirebaseFirestore db;
 
     public static InProgressNotificationsFragment newInstance() {
         return new InProgressNotificationsFragment();
@@ -42,7 +44,7 @@ public class InProgressNotificationsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RequestAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
-        requestsRef = FirebaseDatabase.getInstance().getReference("Requests");
+        db = FirebaseFirestore.getInstance();
         return view;
     }
 
@@ -54,29 +56,34 @@ public class InProgressNotificationsFragment extends Fragment {
     }
 
     private void loadRequestsInProgress() {
-        // Get the ID of the currently logged-in user
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db.collection("patients").whereEqualTo("user_id", currentUserId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot patientSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                        String patientId = patientSnapshot.getString("patient_id");
 
-        // Query the database for requests with status "Pending" and donor ID matching the current user's ID
-        requestsRef.orderByChild("requestStatus").equalTo("Pending").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Request> requests = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Request request = snapshot.getValue(Request.class);
-                    if (request != null && request.getPatientId().equals(currentUserId)) {
-                        requests.add(request);
+                        // Query the "requests" collection for requests with status "in_progress" and patient_id matching the current user's ID
+                        db.collection("requests")
+                                .whereEqualTo("status", "pending")
+                                .whereEqualTo("patient_id", patientId)
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        List<Request> requests = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Request request = document.toObject(Request.class);
+                                            requests.add(request);
+                                        }
+                                        // Update the adapter with the retrieved requests
+                                        adapter.setRequests(requests);
+                                    } else {
+                                        // Handle query failure
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                });
                     }
-                }
-                // Update the adapter with the retrieved requests
-                adapter.setRequests(requests);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle database error
-            }
-        });
+                });
     }
-
 }

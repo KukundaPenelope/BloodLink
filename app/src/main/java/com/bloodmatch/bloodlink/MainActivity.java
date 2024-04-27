@@ -39,16 +39,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         if (userType != null) {
             switch (userType) {
-                case "Donors":
+                case "donor":
                     intent = new Intent(MainActivity.this, Donor_Navigation.class);
                     break;
-                case "Patients":
+                case "patient":
                     intent = new Intent(MainActivity.this, Patient_Navigation.class);
                     break;
-                case "Hospitals":
+                case "hospital":
                     intent = new Intent(MainActivity.this, Hospital_Navigation.class);
                     break;
-                case "BloodBanks":
+                case "bloodBanks":
                     intent = new Intent(MainActivity.this, BloodBank_Navigation.class);
                     break;
                 default:

@@ -4,17 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,16 +21,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bloodmatch.bloodlink.Hospital.Hospital;
 import com.bloodmatch.bloodlink.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Random;
 
 public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.ViewHolder> {
     private List<Donor> donorList;
     private Context context;
+    private HospitalRepository hospitalRepository;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -43,6 +41,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
     public BloodDonorAdapter(List<Donor> donorList, OnRequestClickListener onRequestClickListener) {
         this.donorList = donorList;
         this.onRequestClickListener = onRequestClickListener;
+        this.hospitalRepository = new HospitalRepository(); // Initialize the hospital repository
     }
 
     @NonNull
@@ -60,21 +59,33 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         // Set the donor information in the item layout
         String donorName = "Donor " + (position + 1);
         holder.nameTextView.setText(donorName);
+        holder.bloodGroupText.setText(donor.getBlood_type());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Set the donor information in the item layout
-//        holder.nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
-//        holder.nameTextView.setText(donor.getUid());
-        holder.districtTextView.setText(donor.getLocation());
-        String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
-        holder.contactTextView.setText(generatePseudoNumber());
-//        holder.contactTextView.setText(donor.getPhoneNumber());
-        holder.bloodGroupText.setText(donor.getBloodGroup());
+        String hospitalId = donor.getHospital_id();
+        HospitalRepository repository = new HospitalRepository();
+        repository.getHospitalById(hospitalId, new HospitalRepository.OnHospitalDataListener() {
+            @Override
+            public void onSuccess(Hospital hospital) {
+                holder.districtTextView.setText(hospital.getDistrict());
+                holder.contactTextView.setText(generatePseudoNumber());
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                holder.districtTextView.setText("Unknown District");
+                holder.contactTextView.setText("Phone number not available");
+            }
+
+
+        });
 
         // Set click listener for the item view
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDonorPopup(donorName,donor);
+                showDonorPopup(donorName, donor);
             }
         });
     }
@@ -89,7 +100,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView,districtTextView, contactTextView, bloodGroupText;
+        public TextView nameTextView, districtTextView, contactTextView, bloodGroupText;
 
         public LinearLayout requestLayout;
 
@@ -109,23 +120,33 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        TextView nameTextView = dialog.findViewById(R.id.nameTextView);
-        TextView districtTextView = dialog.findViewById(R.id.districtTextView);
-        TextView contactTextView = dialog.findViewById(R.id.contactTextView);
+        TextView nameTextView = dialog.findViewById(R.id.nameTextView2);
+        TextView districtTextView = dialog.findViewById(R.id.districtTextView2);
+        TextView contactTextView = dialog.findViewById(R.id.contactTextView2);
         LinearLayout callLayout = dialog.findViewById(R.id.callLayout);
         LinearLayout locateLayout = dialog.findViewById(R.id.locateLayout);
-        LinearLayout requestLayout= dialog.findViewById(R.id.requestLayout);
+        LinearLayout requestLayout = dialog.findViewById(R.id.requestLayout);
 
-//        nameTextView.setText(donor.getFirstName() + " " + donor.getLastName());
         nameTextView.setText(donorName);
-        districtTextView.setText(donor.getLocation());
-        // Hash the phone number before displaying it
-        String hashedPhoneNumber = hashPhoneNumber(donor.getPhoneNumber());
-        contactTextView.setText(generatePseudoNumber());
 
-        final Donor finalDonor = donor; // Create a final variable to capture the donor object
+        // Retrieve the hospital information using the hospital ID
+        hospitalRepository.getHospitalById(donor.getHospital_id(), new HospitalRepository.OnHospitalDataListener() {
+            @Override
+            public void onSuccess(Hospital hospital) {
+                districtTextView.setText(hospital.getDistrict());
+                contactTextView.setText(generatePseudoNumber());
+            }
 
-        // Set click listener for the request layout
+            @Override
+            public void onError(String errorMessage) {
+                districtTextView.setText("Unknown District");
+                contactTextView.setText("Phone number not available");
+            }
+        });
+
+
+        final Donor finalDonor = donor;
+
         requestLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,14 +158,14 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
                 dialog.dismiss();
             }
         });
+
         callLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Call the donor using the original phone number
-                String phoneNumber = finalDonor.getPhoneNumber();
-                String countryCode = "+256";
-                String phoneNumberWithCountryCode = countryCode + phoneNumber;
-                if (!phoneNumber.isEmpty()) {
+                String phoneNumber = finalDonor.getPhone_number();
+                if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                    String countryCode = "+256";
+                    String phoneNumberWithCountryCode = countryCode + phoneNumber;
                     Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumberWithCountryCode));
                     context.startActivity(intent);
                 } else {
@@ -154,12 +175,10 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
             }
         });
 
-
-
         locateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String address = finalDonor.getLocation();
+                String address = districtTextView.getText().toString();
                 Uri locationUri = Uri.parse("geo:0,0?q=" + Uri.encode(address));
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, locationUri);
 
@@ -184,9 +203,8 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
                 }
             }
         });
-
-
     }
+
     // Method to generate pseudo number
     private String generatePseudoNumber() {
         // Generate a random 4-digit number
@@ -194,26 +212,4 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         int pseudoNumber = random.nextInt(9000) + 1000;
         return String.valueOf(pseudoNumber);
     }
-
-// Method to hash the phone number
-private String hashPhoneNumber(String phoneNumber) {
-    // Implement your hashing algorithm here
-    // For example, you can use MD5 or SHA-256
-    // Here's a simple example using MD5
-    try {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        digest.update(phoneNumber.getBytes());
-        byte[] hashedBytes = digest.digest();
-        // Convert the byte array to a hexadecimal string
-        StringBuilder builder = new StringBuilder();
-        for (byte b : hashedBytes) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
-    } catch (NoSuchAlgorithmException e) {
-        e.printStackTrace();
-        return phoneNumber; // Return original number in case of error
-    }
-}
-
 }

@@ -8,14 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.bloodmatch.bloodlink.BloodBank.BloodBank_Signup;
 import com.bloodmatch.bloodlink.Donor.Donor_SignUp;
 import com.bloodmatch.bloodlink.Hospital.Hospital_SignUp;
 import com.bloodmatch.bloodlink.Patient.Patient_SignUp;
 
 public class SignUP extends AppCompatActivity {
 
-    CardView donor, Patient, hospital,bloodbank;
+    CardView donor, Patient, hospital,sign_In;
     Toolbar back;
 
     @Override
@@ -25,7 +24,7 @@ public class SignUP extends AppCompatActivity {
         donor =findViewById(R.id.donor);
         Patient=findViewById(R.id.patient);
         hospital =findViewById(R.id.hospital);
-        bloodbank=findViewById(R.id.bloodbank);
+        sign_In=findViewById(R.id.sign_in);
         donor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,10 +49,10 @@ public class SignUP extends AppCompatActivity {
             }
 
         });
-        bloodbank.setOnClickListener(new View.OnClickListener() {
+        sign_In.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(SignUP.this, BloodBank_Signup.class);
+                Intent intent=new Intent(SignUP.this, MainActivity3.class);
                 startActivity(intent);
             }
         });

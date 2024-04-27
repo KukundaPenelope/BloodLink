@@ -1,47 +1,93 @@
 package com.bloodmatch.bloodlink.Patient;
 
 public class Patient {
-    private String uid, firstName, lastName, age, gender,bloodGroup, email, phoneNumber, dob, location, password;
+    private String hospital_id, blood_type, created, created_by, location, email, first_name, last_name, age, gender, phone_number, dob, password, role, user_id,patient_id;
+    private Boolean emailVerified;
 
     public Patient() {
     }
 
-    public Patient(String uid, String firstName, String lastName, String age, String gender,String bloodGroup, String email, String phoneNumber, String dob, String location, String password) {
-        this.uid = uid;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Patient(String hospital_id, String blood_type, String created, String created_by, String location, String email, String first_name, String last_name, String age, String gender, String phone_number, String dob, String password, String role, String user_id, Boolean emailVerified) {
+        this.hospital_id = hospital_id;
+        this.blood_type = blood_type;
+        this.created = created;
+        this.created_by = created_by;
+        this.location = location;
+        this.email = email;
+        this.first_name = first_name;
+        this.last_name = last_name;
         this.age = age;
         this.gender = gender;
-        this.bloodGroup=bloodGroup;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.phone_number = phone_number;
         this.dob = dob;
-        this.location = location;
         this.password = password;
+        this.role = role;
+        this.user_id = user_id;
+        this.emailVerified = emailVerified;
     }
 
-    public String getUid() {
-        return uid;
+    public String getHospital_id() {
+        return hospital_id;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setHospital_id(String hospital_id) {
+        this.hospital_id = hospital_id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getBlood_type() {
+        return blood_type;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setBlood_type(String blood_type) {
+        this.blood_type = blood_type;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getCreated() {
+        return created;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public String getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(String created_by) {
+        this.created_by = created_by;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 
     public String getAge() {
@@ -60,28 +106,12 @@ public class Patient {
         this.gender = gender;
     }
 
-    public String getBloodGroup() {
-        return bloodGroup;
+    public String getPhone_number() {
+        return phone_number;
     }
 
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getDob() {
@@ -92,19 +122,43 @@ public class Patient {
         this.dob = dob;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getPatient_id() {
+        return patient_id;
+    }
+
+    public void setPatient_id(String patient_id) {
+        this.patient_id = patient_id;
     }
 }
