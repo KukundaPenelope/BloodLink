@@ -193,7 +193,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
 
                                     // Create a new Request object
                                     Request request = new Request();
-                                    request.setDonorId(donor.getDonor_id()); // Assuming donor_id is the field that uniquely identifies a donor
+                                    request.setDonor_id(donor.getDonor_id()); // Assuming donor_id is the field that uniquely identifies a donor
                                     request.setPatient_id(patientId);
                                     request.setRequest_time(requestTime);
                                     request.setStatus("pending");

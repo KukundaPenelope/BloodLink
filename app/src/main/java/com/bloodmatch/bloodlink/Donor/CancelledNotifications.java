@@ -1,4 +1,4 @@
-package com.bloodmatch.bloodlink.Patient;
+package com.bloodmatch.bloodlink.Donor;
 
 import static com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG;
 
@@ -15,34 +15,34 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bloodmatch.bloodlink.Donor.RecieveRequestsAdapter;
+import com.bloodmatch.bloodlink.Patient.Patient;
+import com.bloodmatch.bloodlink.Patient.Request;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class New_Notifications extends Fragment {
+public class CancelledNotifications extends Fragment {
 
     private TextView noRequestsTextView;
     private RecyclerView recyclerView;
     private RecieveRequestsAdapter adapter;
     private List<Request> requestList;
+
     private FirebaseFirestore db;
 
-    public static New_Notifications newInstance() {
-        return new New_Notifications();
+    public static CancelledNotifications newInstance() {
+        return new CancelledNotifications();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_new__notifications, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_cancelled_notifications2, container, false);
 
         noRequestsTextView = rootView.findViewById(R.id.noRequestsTextView);
         recyclerView = rootView.findViewById(R.id.requestsRecyclerView);
@@ -50,7 +50,9 @@ public class New_Notifications extends Fragment {
         requestList = new ArrayList<>();
         adapter = new RecieveRequestsAdapter(requestList);
         recyclerView.setAdapter(adapter);
+
         db = FirebaseFirestore.getInstance();
+
 
 
         return rootView;
@@ -72,7 +74,7 @@ public class New_Notifications extends Fragment {
 
                         // Query the "requests" collection for requests with status "in_progress" and patient_id matching the current user's ID
                         db.collection("requests")
-                                .whereEqualTo("status", "pending")
+                                .whereEqualTo("status", "rejected")
                                 .whereEqualTo("donor_id", donor_id)
                                 .get()
                                 .addOnCompleteListener(task -> {
@@ -98,8 +100,9 @@ public class New_Notifications extends Fragment {
                 });
     }
 
-    public void removeRequest(Request request) {
-        requestList.remove(request);
+
+    public void addRequest(Request request) {
+        requestList.add(request);
         adapter.notifyDataSetChanged();
     }
 }

@@ -1,5 +1,6 @@
 package com.bloodmatch.bloodlink.Patient;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -18,18 +19,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Find_A_BloodMatch extends AppCompatActivity {
+public class Find_A_Blood_Match extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BloodBankAdapter2 bloodBankAdapter;
     private List<BloodBanks> bloodBanksList;
     private FirebaseFirestore db;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_ablood_match);
 
-        recyclerView = findViewById(R.id.bloodmatchRecyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -61,11 +63,11 @@ public class Find_A_BloodMatch extends AppCompatActivity {
                             retrieveHospitalLocation(patientBloodGroup, hospitalId);
                         }
                     } else {
-                        Toast.makeText(Find_A_BloodMatch.this, "No patient data found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Find_A_Blood_Match.this, "No patient data found", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(Find_A_BloodMatch.this, "Failed to retrieve patient data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Find_A_Blood_Match.this, "Failed to retrieve patient data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -80,14 +82,14 @@ public class Find_A_BloodMatch extends AppCompatActivity {
                             // Retrieve nearby blood banks with matching blood group and required blood quantities
                             retrieveBloodBanks(patientBloodGroup, hospitalLocation);
                         } else {
-                            Toast.makeText(Find_A_BloodMatch.this, "Hospital location not found", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Find_A_Blood_Match.this, "Hospital location not found", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(Find_A_BloodMatch.this, "Hospital document does not exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Find_A_Blood_Match.this, "Hospital document does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(Find_A_BloodMatch.this, "Failed to retrieve hospital location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Find_A_Blood_Match.this, "Failed to retrieve hospital location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -120,7 +122,7 @@ public class Find_A_BloodMatch extends AppCompatActivity {
                     bloodBankAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(Find_A_BloodMatch.this, "Failed to retrieve blood banks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Find_A_Blood_Match.this, "Failed to retrieve blood banks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 

@@ -2,7 +2,7 @@ package com.bloodmatch.bloodlink.Patient;
 
 public class Request {
     private String request_id;
-    private String donorId;
+    private String donor_id;
     private String patient_id;
     private String request_time;
     private String fcmToken;
@@ -12,9 +12,9 @@ public class Request {
     public Request() {
     }
 
-    public Request(String request_id, String donorId, String patient_id, String request_time, String fcmToken, String status) {
+    public Request(String request_id, String donor_id, String patient_id, String request_time, String fcmToken, String status) {
         this.request_id = request_id;
-        this.donorId = donorId;
+        this.donor_id = donor_id;
         this.patient_id = patient_id;
         this.request_time = request_time;
         this.fcmToken = fcmToken;
@@ -29,12 +29,12 @@ public class Request {
         this.request_id = request_id;
     }
 
-    public String getDonorId() {
-        return donorId;
+    public String getDonor_id() {
+        return donor_id;
     }
 
-    public void setDonorId(String donorId) {
-        this.donorId = donorId;
+    public void setDonor_id(String donor_id) {
+        this.donor_id = donor_id;
     }
 
     public String getPatient_id() {

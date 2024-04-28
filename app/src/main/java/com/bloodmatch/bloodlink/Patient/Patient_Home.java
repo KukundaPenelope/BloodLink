@@ -53,7 +53,7 @@ public class Patient_Home extends Fragment {
         findBloodMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Find_A_BloodMatch.class);
+                Intent intent = new Intent(getActivity(), Find_A_Blood_Match.class);
                 startActivity(intent);            }
         });
         about.setOnClickListener(new View.OnClickListener() {

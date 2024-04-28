@@ -29,7 +29,7 @@ public class DonorNotificationsPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return ApprovedNotificationsFragment.newInstance();
             case 2:
-                return com.bloodmatch.bloodlink.Donor.CancelledNotificationsFragment.newInstance();
+                return CancelledNotifications.newInstance();
             default:
                 return null;
         }

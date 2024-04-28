@@ -1,6 +1,9 @@
 package com.bloodmatch.bloodlink.Donor;
 
+import static com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import com.bloodmatch.bloodlink.Patient.Request;
 import com.bloodmatch.bloodlink.Patient.RequestAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,7 +33,7 @@ public class ApprovedNotificationsFragment extends Fragment {
 
     private TextView noRequestsTextView;
     private RecyclerView recyclerView;
-    private RequestAdapter adapter;
+    private RecieveRequestsAdapter adapter;
     private List<Request> requestList;
 
     private FirebaseFirestore db;
@@ -47,41 +51,57 @@ public class ApprovedNotificationsFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.requestsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         requestList = new ArrayList<>();
-        adapter = new RequestAdapter(requestList);
+        adapter = new RecieveRequestsAdapter(requestList);
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String currentUserId = currentUser.getUid();
-
-            // Query Firestore for approved requests for the current donor
-            db.collection("requests")
-                    .whereEqualTo("donorId", currentUserId)
-                    .whereEqualTo("requestStatus", "approved")
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            requestList.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Request request = document.toObject(Request.class);
-                                requestList.add(request);
-                            }
-                            adapter.notifyDataSetChanged();
-                            if (requestList.isEmpty()) {
-                                noRequestsTextView.setVisibility(View.VISIBLE);
-                            } else {
-                                noRequestsTextView.setVisibility(View.GONE);
-                            }
-                        } else {
-                            // Handle task failure
-                        }
-                    });
-        }
 
         return rootView;
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Load requests with status "in_progress" when the fragment starts
+        loadRequestsInProgress();
+    }
+    private void loadRequestsInProgress() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db.collection("donors").whereEqualTo("user_id", currentUserId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot donorSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                        String donor_id = donorSnapshot.getString("donor_id");
+
+                        // Query the "requests" collection for requests with status "in_progress" and patient_id matching the current user's ID
+                        db.collection("requests")
+                                .whereEqualTo("status", "approved")
+                                .whereEqualTo("donor_id", donor_id)
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        List<Request> requests = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Request request = document.toObject(Request.class);
+                                            requests.add(request);
+                                        }
+                                        // Update the adapter with the retrieved requests
+                                        adapter.setRequests(requests);
+                                        if (requests.isEmpty()) {
+                                            noRequestsTextView.setVisibility(View.VISIBLE);
+                                        } else {
+                                            noRequestsTextView.setVisibility(View.GONE);
+                                        }
+                                    } else {
+                                        // Handle query failure
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                });
+                    }
+                });
+    }
+
     public void addRequest(Request request) {
         requestList.add(request);
         adapter.notifyDataSetChanged();

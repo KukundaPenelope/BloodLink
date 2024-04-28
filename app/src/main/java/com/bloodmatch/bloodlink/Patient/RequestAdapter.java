@@ -44,7 +44,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         holder.requestStatusTextView.setText(request.getStatus());
         Donor donor = new Donor();
         // Load donor data from Firestore based on donorId
-        db.collection("donors").document(request.getDonorId()).get()
+        db.collection("donors").document(request.getDonor_id()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();

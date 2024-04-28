@@ -60,7 +60,7 @@ public class ApprovalDialogFragment extends DialogFragment {
         // Update the status of the request to "approved" in Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference requestRef = db.collection("requests").document(request.getRequest_id());
-        requestRef.update("requestStatus", "approved")
+        requestRef.update("status", "approved")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -85,7 +85,7 @@ public class ApprovalDialogFragment extends DialogFragment {
         // Update the status of the request to "cancelled" in Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference requestRef = db.collection("requests").document(request.getRequest_id());
-        requestRef.update("requestStatus", "cancelled")
+        requestRef.update("status", "rejected")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -111,7 +111,8 @@ public class ApprovalDialogFragment extends DialogFragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            // Location stored successfully
+                            showToast("Patient document does not exist");
+
                         } else {
                             // Handle error
                         }

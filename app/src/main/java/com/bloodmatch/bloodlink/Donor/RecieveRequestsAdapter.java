@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bloodmatch.bloodlink.Patient.Patient;
@@ -22,7 +23,6 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
     private List<Request> requests;
     FirebaseFirestore db;
 
-    private ViewHolder holder;
 
     public RecieveRequestsAdapter(List<Request> requests) {
         this.requests = requests;
@@ -48,34 +48,27 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
         // Retrieve patient details based on the patientId in the request
         db.collection("patients").document(request.getPatient_id()).get()
                 .addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-//                Patient patient = task.toObject(Patient.class);
-                Patient patient = documentSnapshot.toObject(Patient.class);
-                if (documentSnapshot != null && documentSnapshot.exists()) {
-                    // Retrieve patient attributes
-                    String firstName = patient.getFirst_name();
-                    String lastName = patient.getLast_name();
-                    String fullName = firstName + " " + lastName;
-                    String bloodGroup = patient.getBlood_type();
-                    String location = documentSnapshot.getString("hospital");
-                    // Set patient details to the views in ViewHolder
-                    holder.requestName.setText(fullName);
-                    holder.donorGroup.setText(bloodGroup);
-                    holder.locationTextView.setText(location);
-                    holder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Show the dialog fragment
-                            ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request, position);
-                            dialogFragment.show(((AppCompatActivity) holder.itemView.getContext()).getSupportFragmentManager(), "ApprovalDialogFragment");
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // Retrieve patient attributes
+                            String name = documentSnapshot.getString("name");
+                            String bloodGroup = documentSnapshot.getString("blood_type");
+                            String location = documentSnapshot.getString("location");
+                            // Set patient details to the views in ViewHolder
+                            holder.requestIdTextView.setText(name);
+                            holder.donorGroup.setText(bloodGroup);
+                            holder.locationTextView.setText(location);
                         }
-                    });
+                    }
+                });
 
-                }
-            }
-        }).addOnFailureListener(e -> {
-            // Handle failure
+        // Set click listener for the item view
+        holder.itemView.setOnClickListener(v -> {
+            // Show the dialog fragment
+            ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request, position);
+            FragmentManager fragmentManager = ((AppCompatActivity) holder.itemView.getContext()).getSupportFragmentManager();
+            dialogFragment.show(fragmentManager, "ApprovalDialogFragment");
         });
     }
 
@@ -88,7 +81,6 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
         // Declare views here
         TextView requestIdTextView,locationTextView;
         TextView donorGroup;
-        TextView requestName;
         TextView requestTimeTextView;
         TextView requestStatusTextView;
 
