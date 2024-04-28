@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bloodmatch.bloodlink.BloodBank.LocateBloodBanks;
 import com.bloodmatch.bloodlink.DonationSites.LocateDonationSites;
+import com.bloodmatch.bloodlink.DonationSites.LocateHospitals;
 import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.Patient.AboutDonation;
 import com.bloodmatch.bloodlink.Patient.AvailablePatientsActivity;
@@ -126,11 +127,35 @@ public class Donor_Navigation extends AppCompatActivity {
         donation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Donor_Navigation.this, "Locate Donation sites", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Donor_Navigation.this, LocateDonationSites.class);
-                startActivity(intent);
+                // Create a popup dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(Donor_Navigation.this);
+                builder.setTitle("Locate Donation Sites");
+                builder.setMessage("Do you want to locate hospitals or blood banks?");
+                builder.setPositiveButton("Locate Hospitals", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Donor_Navigation.this, LocateHospitals.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Locate Blood Banks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Donor_Navigation.this, LocateDonationSites.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
             }
         });
+//        donation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(Donor_Navigation.this, "Locate Donation sites", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(Donor_Navigation.this, LocateDonationSites.class);
+//                startActivity(intent);
+//            }
+//        });
         donationSitesImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

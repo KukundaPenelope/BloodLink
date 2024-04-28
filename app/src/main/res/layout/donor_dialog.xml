@@ -89,7 +89,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/callLayout"
+            android:id="@+id/callLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -110,7 +110,7 @@
                 />
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/locateLayout"
+            android:id="@+id/locateLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

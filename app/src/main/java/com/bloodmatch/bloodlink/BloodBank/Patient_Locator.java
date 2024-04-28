@@ -1,6 +1,7 @@
 package com.bloodmatch.bloodlink.BloodBank;
 
-import static com.bloodmatch.bloodlink.Patient.BloodBankAdapter2.PERMISSION_REQUEST_CODE;
+
+import static com.bloodmatch.bloodlink.BloodBank.BloodBankAdapter.PERMISSION_REQUEST_CODE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -63,7 +64,7 @@ public class Patient_Locator extends AppCompatActivity implements OnMapReadyCall
 
     private void fetchPatientLocation() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String requestId = getIntent().getStringExtra("requestId");
+        String requestId = getIntent().getStringExtra("request_id");
         if (requestId != null) {
             db.collection("requests").document(requestId)
                     .get()
@@ -71,7 +72,7 @@ public class Patient_Locator extends AppCompatActivity implements OnMapReadyCall
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (documentSnapshot.exists()) {
-                                String patientLocation = documentSnapshot.getString("patientLocation");
+                                String patientLocation = documentSnapshot.getString("location");
                                 if (patientLocation != null && !patientLocation.isEmpty()) {
                                     // Convert the patient's location to LatLng
                                     Geocoder geocoder = new Geocoder(Patient_Locator.this, Locale.getDefault());

@@ -1,15 +1,14 @@
 package com.bloodmatch.bloodlink.Patient;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bloodmatch.bloodlink.BloodBank.BloodAmount;
 import com.bloodmatch.bloodlink.BloodBank.BloodBanks;
+import com.bloodmatch.bloodlink.Patient.BloodBankAdapter2;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +17,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Find_A_Blood_Match extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -25,7 +25,6 @@ public class Find_A_Blood_Match extends AppCompatActivity {
     private List<BloodBanks> bloodBanksList;
     private FirebaseFirestore db;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +57,9 @@ public class Find_A_Blood_Match extends AppCompatActivity {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             // Get patient data
                             String patientBloodGroup = documentSnapshot.getString("blood_type");
-                            String hospitalId = documentSnapshot.getString("hospital_id");
-                            // Retrieve hospital location based on hospital ID
-                            retrieveHospitalLocation(patientBloodGroup, hospitalId);
+                            String patientLocation = documentSnapshot.getString("location");
+                            // Retrieve blood banks based on patient's blood group and location
+                            retrieveBloodBanks(patientBloodGroup, patientLocation);
                         }
                     } else {
                         Toast.makeText(Find_A_Blood_Match.this, "No patient data found", Toast.LENGTH_SHORT).show();
@@ -71,81 +70,50 @@ public class Find_A_Blood_Match extends AppCompatActivity {
                 });
     }
 
-    // Method to retrieve hospital's location
-    private void retrieveHospitalLocation(String patientBloodGroup, String hospitalId) {
-        db.collection("hospital").document(hospitalId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String hospitalLocation = documentSnapshot.getString("district");
-                        if (hospitalLocation != null) {
-                            // Retrieve nearby blood banks with matching blood group and required blood quantities
-                            retrieveBloodBanks(patientBloodGroup, hospitalLocation);
-                        } else {
-                            Toast.makeText(Find_A_Blood_Match.this, "Hospital location not found", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(Find_A_Blood_Match.this, "Hospital document does not exist", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Find_A_Blood_Match.this, "Failed to retrieve hospital location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    // Method to retrieve blood banks based on the hospital's location and patient's blood group
-    // Method to retrieve blood banks based on the hospital's location and patient's blood group
-    private void retrieveBloodBanks(String patientBloodGroup, String hospitalLocation) {
-        bloodBankAdapter = new BloodBankAdapter2(this, bloodBanksList, patientBloodGroup);
-        recyclerView.setAdapter(bloodBankAdapter);
-
-        // Query nearby blood banks with matching blood group and required blood quantities
-        db.collection("blood_bank").whereEqualTo("district", hospitalLocation)
+    // Method to retrieve blood banks based on patient's blood group and location
+    private void retrieveBloodBanks(String patientBloodGroup, String patientLocation) {
+        db.collection("blood_bank").whereEqualTo("district", patientLocation)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    bloodBanksList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         BloodBanks bloodBank = document.toObject(BloodBanks.class);
-
-                        // Access the corresponding blood quantity based on the patient's blood group
-                        BloodAmount bloodAmount = bloodBank.getBloodAmount();
+                        Map<String, Object> bloodAmount = bloodBank.getBloodAmount();
                         String requiredBloodQuantity = getBloodQuantity(patientBloodGroup, bloodAmount);
                         if (requiredBloodQuantity != null) {
-                            // Check if the blood bank has sufficient blood quantity
                             int availableBloodQuantity = Integer.parseInt(requiredBloodQuantity);
                             if (availableBloodQuantity >= 0) {
                                 bloodBanksList.add(bloodBank);
                             }
                         }
                     }
-
-                    // Notify the adapter of the data change to update the RecyclerView
-                    bloodBankAdapter.notifyDataSetChanged();
+                    bloodBankAdapter = new BloodBankAdapter2(this, bloodBanksList,patientBloodGroup);
+                    recyclerView.setAdapter(bloodBankAdapter);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Find_A_Blood_Match.this, "Failed to retrieve blood banks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // Method to get blood quantity for the patient's blood group
-    private String getBloodQuantity(String patientBloodGroup, BloodAmount bloodAmount) {
-        // Access the corresponding blood quantity based on the patient's blood group
+    // Method to get the blood quantity based on the patient's blood group
+    private String getBloodQuantity(String patientBloodGroup, Map<String, Object> bloodAmount) {
         switch (patientBloodGroup) {
             case "A+":
-                return bloodAmount.getAPlus();
+                return bloodAmount.get("A+").toString();
             case "A-":
-                return bloodAmount.getAMinus();
+                return bloodAmount.get("A-").toString();
             case "B+":
-                return bloodAmount.getBPlus();
+                return bloodAmount.get("B+").toString();
             case "B-":
-                return bloodAmount.getBMinus();
+                return bloodAmount.get("B-").toString();
             case "AB+":
-                return bloodAmount.getABPlus();
+                return bloodAmount.get("AB+").toString();
             case "AB-":
-                return bloodAmount.getABMinus();
+                return bloodAmount.get("AB-").toString();
             case "O+":
-                return bloodAmount.getOPlus();
+                return bloodAmount.get("O+").toString();
             case "O-":
-                return bloodAmount.getOMinus();
+                return bloodAmount.get("O-").toString();
             default:
                 return null;
         }

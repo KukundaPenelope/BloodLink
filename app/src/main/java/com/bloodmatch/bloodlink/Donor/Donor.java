@@ -11,6 +11,7 @@ public class Donor {
 
     private String email;
     private String gender;
+    private String location;
     private String hospital_id;
     private Boolean emailVerified;
 
@@ -24,7 +25,7 @@ public class Donor {
         // Default constructor required for Firestore
     }
 
-    public Donor(String age, String blood_type, String created, String created_by, String dob, String email, String gender, String hospital_id, String name, String phone_number, String role, String user_id) {
+    public Donor(String age, String blood_type, String created, String created_by, String dob, String email, String gender, String location, String hospital_id, Boolean emailVerified, String name, String phone_number, String role, String user_id, String donor_id) {
         this.age = age;
         this.blood_type = blood_type;
         this.created = created;
@@ -32,11 +33,14 @@ public class Donor {
         this.dob = dob;
         this.email = email;
         this.gender = gender;
+        this.location = location;
         this.hospital_id = hospital_id;
+        this.emailVerified = emailVerified;
         this.name = name;
         this.phone_number = phone_number;
         this.role = role;
         this.user_id = user_id;
+        this.donor_id = donor_id;
     }
 
     public String getAge() {
@@ -87,14 +91,6 @@ public class Donor {
         this.email = email;
     }
 
-    public Boolean getEmailVerified() {
-        return emailVerified;
-    }
-
-    public void setEmailVerified(Boolean emailVerified) {
-        this.emailVerified = emailVerified;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -103,12 +99,28 @@ public class Donor {
         this.gender = gender;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getHospital_id() {
         return hospital_id;
     }
 
     public void setHospital_id(String hospital_id) {
         this.hospital_id = hospital_id;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 
     public String getName() {

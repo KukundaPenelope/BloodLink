@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bloodmatch.bloodlink.DonationSites.HospitalsAdapter;
+import com.bloodmatch.bloodlink.Donor.Donor;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -22,7 +24,10 @@ import java.util.List;
 public class LocateBloodBanks extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BloodBankAdapter adapter;
+    private HospitalsAdapter adapter2;
     private List<BloodBanks> bloodBanks;
+    private List<Donor> donors;
+
     private EditText searchEditText;
     private FirebaseFirestore db;
 

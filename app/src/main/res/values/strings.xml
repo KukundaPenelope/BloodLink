@@ -25,4 +25,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_blood_match_location">BloodMatch_Location</string>
     <string name="default_web_client_id">217340673027-7nud5kg86tbf75rjonp95l3b3r7rlugf.apps.googleusercontent.com</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="YOUR_API_KEY">AIzaSyASpoAwQ1c-UYucjf36qgKpPidY2vA6SlY</string>
+    <string name="title_activity_locate_hospitals">LocateHospitals</string>
 </resources>

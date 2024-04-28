@@ -139,7 +139,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
                             Donor donor = document.toObject(Donor.class);
                             donor.setBlood_type(document.getString("blood_type"));
                             donor.setPhone_number(document.getString("phone_number"));
-                            donor.setHospital_id(document.getString("hospital_id"));
+                            donor.setLocation(document.getString("location"));
 
                             donorList.add(donor);
                         }
@@ -149,33 +149,7 @@ public class LocateBloodDonors extends AppCompatActivity implements BloodDonorAd
                     }
                 });
     }
-    //public  void getdonorId(String id){
-//// Get a reference to the "donors" collection
-//    CollectionReference donorsCollectionRef = db.collection("donors");
-//
-//// Query for documents in the "donors" collection
-//    donorsCollectionRef.limit(1)  // Limit the query to retrieve only one document
-//            .get()
-//            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                @Override
-//                public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                    if (documentSnapshot != null && documentSnapshot.exists()) {
-//                        String donorUserId = documentSnapshot.getId();
-//                        // Use donorUserId as needed
-//                    } else {
-//                        Log.d(TAG, "No such document");
-//                    }
-//                }
-//            })
-//            .addOnFailureListener(new OnFailureListener() {
-//                @Override
-//                public void onFailure(@NonNull Exception e) {
-//                    Log.w(TAG, "Error getting documents.", e);
-//                }
-//            });
-//
-//return;
-//}
+
     public void onRequestClick(Donor donor) {
         String user_id = currentUser.getUid();
         db.collection("patients").whereEqualTo("user_id", user_id)

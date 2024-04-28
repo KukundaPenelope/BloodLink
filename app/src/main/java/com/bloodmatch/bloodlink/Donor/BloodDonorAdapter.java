@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bloodmatch.bloodlink.Hospital.Hospital;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,7 +30,7 @@ import java.util.Random;
 public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.ViewHolder> {
     private List<Donor> donorList;
     private Context context;
-    private HospitalRepository hospitalRepository;
+    private DonorRepository donorRepository;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -41,7 +40,7 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
     public BloodDonorAdapter(List<Donor> donorList, OnRequestClickListener onRequestClickListener) {
         this.donorList = donorList;
         this.onRequestClickListener = onRequestClickListener;
-        this.hospitalRepository = new HospitalRepository(); // Initialize the hospital repository
+        this.donorRepository = new DonorRepository(); // Initialize the hospital repository
     }
 
     @NonNull
@@ -62,12 +61,12 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         holder.bloodGroupText.setText(donor.getBlood_type());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        String hospitalId = donor.getHospital_id();
-        HospitalRepository repository = new HospitalRepository();
-        repository.getHospitalById(hospitalId, new HospitalRepository.OnHospitalDataListener() {
+        String donorId = donor.getDonor_id();
+        DonorRepository repository = new DonorRepository();
+        repository.getDonorById(donorId, new DonorRepository.OnPatientClickListner() {
             @Override
-            public void onSuccess(Hospital hospital) {
-                holder.districtTextView.setText(hospital.getDistrict());
+            public void onSuccess(Donor donor) {
+                holder.districtTextView.setText(donor.getLocation());
                 holder.contactTextView.setText(generatePseudoNumber());
 
             }
@@ -129,11 +128,11 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 
         nameTextView.setText(donorName);
 
-        // Retrieve the hospital information using the hospital ID
-        hospitalRepository.getHospitalById(donor.getHospital_id(), new HospitalRepository.OnHospitalDataListener() {
+        // Retrieve the donor information using the hospital ID
+        donorRepository.getDonorById(donor.getDonor_id(), new DonorRepository.OnPatientClickListner() {
             @Override
-            public void onSuccess(Hospital hospital) {
-                districtTextView.setText(hospital.getDistrict());
+            public void onSuccess(Donor donor) {
+                districtTextView.setText(donor.getLocation());
                 contactTextView.setText(generatePseudoNumber());
             }
 

@@ -110,6 +110,7 @@ public class Donor_SignUp extends AppCompatActivity {
         dialog.show();
 
         EditText emailEditText = dialogView.findViewById(R.id.emailEditText);
+        EditText locationEditText = dialogView.findViewById(R.id.locationText);
         EditText phoneEditText = dialogView.findViewById(R.id.phoneholder);
         dobEditText = dialogView.findViewById(R.id.dobEditText);
         EditText passwordEditText = dialogView.findViewById(R.id.passwordEditText);
@@ -127,6 +128,7 @@ public class Donor_SignUp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString().trim();
+                String Location = locationEditText.getText().toString().trim();
                 String phoneNumber = phoneEditText.getText().toString().trim();
                 String dob = dobEditText.getText().toString().trim();
                 String hospital = bloodBankSpinner.getSelectedItem().toString().trim();
@@ -135,7 +137,7 @@ public class Donor_SignUp extends AppCompatActivity {
                 if (email.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || hospital.isEmpty() || password.isEmpty()) {
                     Toast.makeText(Donor_SignUp.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    signUpPatient(firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, hospital, password);
+                    signUpPatient(firstName, lastName, age, gender,Location, bloodGroup, email, phoneNumber, dob, hospital, password);
                     dialog.dismiss();
                 }
             }
@@ -187,7 +189,7 @@ public class Donor_SignUp extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void signUpPatient(String firstName, String lastName, String age, String gender, String bloodGroup, String email, String phoneNumber, String dob, String bloodBankName, String password) {
+    private void signUpPatient(String firstName, String lastName, String age,String location, String gender, String bloodGroup, String email, String phoneNumber, String dob, String bloodBankName, String password) {
         // Create a user with email and password authentication
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -217,6 +219,7 @@ public class Donor_SignUp extends AppCompatActivity {
                                                 donorData.put("gender", gender);
                                                 donorData.put("name", firstName + " " + lastName);
                                                 donorData.put("age", age);
+                                                donorData.put("location",location);
                                                 donorData.put("phone_number", phoneNumber);
                                                 donorData.put("dob", dob);
                                                 donorData.put("role", "donor");

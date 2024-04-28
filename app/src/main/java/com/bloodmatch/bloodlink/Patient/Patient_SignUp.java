@@ -112,7 +112,7 @@ public class Patient_SignUp extends AppCompatActivity {
 
         final AlertDialog dialog = dialogBuilder.create();
         dialog.show();
-
+        EditText locationEdit = dialogView.findViewById(R.id.location);
         EditText emailEditText = dialogView.findViewById(R.id.emailEditText);
         EditText phoneEditText = dialogView.findViewById(R.id.phoneholder);
          dobEditText = dialogView.findViewById(R.id.dobEditText);
@@ -135,11 +135,12 @@ public class Patient_SignUp extends AppCompatActivity {
                 String dob = dobEditText.getText().toString().trim();
                 String hospital = hospitalSpinner.getSelectedItem().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
+                String Location = locationEdit.getText().toString().trim();
 
                 if (email.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty() || hospital.isEmpty() || password.isEmpty()) {
                     Toast.makeText(Patient_SignUp.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    signUpPatient(firstName, lastName, age, gender, bloodGroup, email, phoneNumber, dob, hospital, password);
+                    signUpPatient(firstName, lastName, age, gender, bloodGroup, email,Location, phoneNumber, dob, hospital, password);
                     dialog.dismiss();
                 }
             }
@@ -191,7 +192,7 @@ public class Patient_SignUp extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void signUpPatient(String firstName, String lastName, String age, String gender, String bloodGroup, String email, String phoneNumber, String dob, String hospitalName, String password) {
+    private void signUpPatient(String firstName, String lastName, String age, String gender, String bloodGroup, String email,String locaton, String phoneNumber, String dob, String hospitalName, String password) {
         // Create a user with email and password authentication
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -217,6 +218,7 @@ public class Patient_SignUp extends AppCompatActivity {
                                                 patientData.put("created", createdDate);
                                                 patientData.put("created_by", email);
                                                 patientData.put("email", email);
+                                                patientData.put("location",locaton);
                                                 patientData.put("gender", gender);
                                                 patientData.put("name", firstName + " " + lastName);
                                                 patientData.put("age", age);

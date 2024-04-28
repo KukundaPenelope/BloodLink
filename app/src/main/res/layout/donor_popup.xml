@@ -109,7 +109,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        >
 
+        <EditText
+            android:id="@+id/locationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="false"
+            android:drawableStart="@drawable/baseline_location_on_24"
+            android:drawablePadding="4dp" />
+    </com.google.android.material.textfield.TextInputLayout>
     <!-- Password -->
     <TextView
         android:layout_width="wrap_content"

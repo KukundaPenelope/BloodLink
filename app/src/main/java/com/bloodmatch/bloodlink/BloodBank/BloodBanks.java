@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class BloodBanks {
     private String address;
-    private BloodAmount bloodAmount;
+    private Map<String, Object> bloodAmount;
     private String contact;
     private String created;
     private String createdBy;
@@ -17,7 +17,7 @@ public class BloodBanks {
         // Default constructor required for Firestore
     }
 
-    public BloodBanks(String address, BloodAmount bloodAmount, String contact, String created, String createdBy, String district, String email, String hospitalId, String name) {
+    public BloodBanks(String address, Map<String, Object> bloodAmount, String contact, String created, String createdBy, String district, String email, String hospitalId, String name) {
         this.address = address;
         this.bloodAmount = bloodAmount;
         this.contact = contact;
@@ -37,11 +37,11 @@ public class BloodBanks {
         this.address = address;
     }
 
-    public BloodAmount getBloodAmount() {
+    public Map<String, Object> getBloodAmount() {
         return bloodAmount;
     }
 
-    public void setBloodAmount(BloodAmount bloodAmount) {
+    public void setBloodAmount(Map<String, Object> bloodAmount) {
         this.bloodAmount = bloodAmount;
     }
 

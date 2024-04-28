@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bloodmatch.bloodlink.BloodBank.Patient_Locator;
 import com.bloodmatch.bloodlink.BloodBank.LocateBloodBanks;
+import com.bloodmatch.bloodlink.DonationSites.MapsActivity;
 import com.bloodmatch.bloodlink.Donor.LocateBloodDonors;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +54,7 @@ public class Patient_Home extends Fragment {
         findBloodMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Find_A_Blood_Match.class);
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
                 startActivity(intent);            }
         });
         about.setOnClickListener(new View.OnClickListener() {

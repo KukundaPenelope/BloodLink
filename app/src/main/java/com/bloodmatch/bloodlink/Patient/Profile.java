@@ -16,11 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.bloodmatch.bloodlink.Donor.Donor;
 import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class Profile extends AppCompatActivity {
 
@@ -103,29 +106,53 @@ public class Profile extends AppCompatActivity {
 
     private void retrieveAndFillUserData() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
+       String userid= currentUser.getUid();
+        Patient patient = new Patient();
+        // Load donor data from Firestore based on donorId
+        db.collection("patients").whereEqualTo("user_id",userid)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot document = task.getResult();
+                        if (document != null && !document.isEmpty()) {
+                            // Retrieve donor data
+//                            String name = document.getString("name");
 
-        if (currentUser != null) {
-            db.collection("patients").document(currentUser.getUid())
-
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            Patient patient = documentSnapshot.toObject(Patient.class);
-
-                            if (patient != null) {
                                 String fullName = patient.getFirst_name() + " " + patient.getLast_name();
                                 nameEditText.setText(fullName);
                                 phoneEditText.setText(patient.getPhone_number());
                                 emailEditText.setText(patient.getEmail());
                                 passwordEditText.setText(patient.getPassword());
                                 bloodGroup.setText(patient.getBlood_type());
-                            }
+
+                        } else {
                         }
-                    })
-                    .addOnFailureListener(e -> {
+                    } else {
                         // Handle errors
-                    });
-        }
+                    }
+                });
+//        if (currentUser != null) {
+//            db.collection("patients").document(currentUser.getUid())
+//
+//                    .get()
+//                    .addOnSuccessListener(documentSnapshot -> {
+//                        if (documentSnapshot.exists()) {
+//                            Patient patient = documentSnapshot.toObject(Patient.class);
+//
+//                            if (patient != null) {
+//                                String fullName = patient.getFirst_name() + " " + patient.getLast_name();
+//                                nameEditText.setText(fullName);
+//                                phoneEditText.setText(patient.getPhone_number());
+//                                emailEditText.setText(patient.getEmail());
+//                                passwordEditText.setText(patient.getPassword());
+//                                bloodGroup.setText(patient.getBlood_type());
+//                            }
+//                        }
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        // Handle errors
+//                    });
+//        }
     }
 
     private void showLogoutDialog() {
@@ -179,17 +206,25 @@ public class Profile extends AppCompatActivity {
         saveBtn.setVisibility(View.GONE);
         editBtn.setVisibility(View.VISIBLE);
     }
-
     private void updateUserData(String name, String phone) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        String userId = currentUser.getUid();
 
         if (currentUser != null) {
             // Use the UID of the current user to update the corresponding document in the "Patients" collection
-            db.collection("patients").document(currentUser.getUid())
-                    .update("fullName", name,
-                            "phoneNumber", phone)
-                    .addOnSuccessListener(aVoid -> {
-                        // Data updated successfully
+            db.collection("patients")
+                    .whereEqualTo("user_id", userId)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                            documentSnapshot.getReference().update("name", name, "phone_number", phone)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Data updated successfully
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Handle error
+                                    });
+                        }
                     })
                     .addOnFailureListener(e -> {
                         // Handle error
