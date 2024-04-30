@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bloodmatch.bloodlink.Patient.Patient;
+import com.bloodmatch.bloodlink.Donor.Donor;
 import com.bloodmatch.bloodlink.R;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -23,10 +23,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -43,11 +42,6 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
     private static final int PERMISSION_REQUEST_CODE = 1001;
     private FirebaseFirestore firestore;
     private LatLng userLocation;
-    private List<Patient> patientsList;
-
-    private FirebaseUser currentUser;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,73 +74,56 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         mMap = googleMap;
     }
 
-    private void addMarkersForNearbyBloodBanks(List<BloodBanks> nearbyBloodBanks) {
-        for (BloodBanks bloodBank : nearbyBloodBanks) {
-            LatLng location = getLocationFromAddress(geocoder, bloodBank.getAddress());
+    private void addMarkersForNearbyBloodDonors(List<Donor> nearbyBloodDonors) {
+        for (Donor donor : nearbyBloodDonors) {
+            LatLng location = getLocationFromAddress(geocoder, donor.getLocation());
             if (location != null) {
                 mMap.addMarker(new MarkerOptions()
                         .position(location)
-                        .title(bloodBank.getName())
-                        .snippet(bloodBank.getAddress()));
+                        .title(donor.getName())
+                        .snippet(donor.getLocation())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
             }
         }
     }
-    private void getNearbyBloodBanks(LatLng userLocation) {
-        List<BloodBanks> nearbyBloodBanks = new ArrayList<>();
 
-        // Retrieve the blood type of the patient
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = currentUser != null ? currentUser.getUid() : null;
+    private void getNearbyBloodDonors(LatLng userLocation) {
+        List<Donor> nearbyBloodDonors = new ArrayList<>();
 
-        if (userId != null) {
-            firestore.collection("patients").whereEqualTo("user_id",userId)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot donorSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-//                            String patient_Id = donorSnapshot.getString("patient_id");
+        // Query donors collection in Firestore
+        firestore.collection("donors")
+                .get()
+                .addOnCompleteListener(queryDocumentSnapshots -> {
+                if (queryDocumentSnapshots.isSuccessful()) {
+                  DocumentSnapshot document = queryDocumentSnapshots.getResult().getDocuments().get(0);
+//                            // Convert Firestore document to Donor object
+                            Donor donor = document.toObject(Donor.class);
 
-                            String patientBloodType = donorSnapshot.getString("blood_type");
+                            // Convert address to LatLng
+                            LatLng donorLocation = getLocationFromAddress(geocoder, document.getString("location"));
 
-                        // Query blood banks collection in Firestore
-                        firestore.collection("blood_bank")
-                                .whereGreaterThan("blood_amount." + patientBloodType, 0)
-                                .get()
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        for (DocumentSnapshot document1 : task1.getResult()) {
-                                            // Convert Firestore document to BloodBanks object
-                                            BloodBanks bloodBank = document1.toObject(BloodBanks.class);
+                            if (donorLocation != null) {
+                                // Calculate distance between user location and donor location
+                                double distance = calculateDistance(userLocation, donorLocation);
 
-                                            // Convert address to LatLng
-                                            LatLng bloodBankLocation = getLocationFromAddress(geocoder, document1.getString("address"));
+                                // Check if donor is within 500 meters
+                                if (distance <= 10000) {
+                                    nearbyBloodDonors.add(donor);
+                                }
+                            }
+                            else {
+                                Log.d("Maps_Activity", "Error getting blood donors: " );
+                            }
+                        }
+                else {
+                    Log.d("Maps_Activity", "Error getting blood donors: " );
+                }
+                        // Add markers for nearby blood donors on the map
+                        addMarkersForNearbyBloodDonors(nearbyBloodDonors);
 
-                                            if (bloodBankLocation != null) {
-                                                // Calculate distance between user location and blood bank location
-                                                double distance = calculateDistance(userLocation, bloodBankLocation);
-
-                                                // Check if blood bank is within 500 meters
-                                                if (distance <= 500) {
-                                                    // Check if blood bank has the same blood type as the patient
-                                                    if (bloodBank.getBloodAmounts().containsKey(patientBloodType)) {
-                                                        nearbyBloodBanks.add(bloodBank);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        // Add markers for nearby blood banks on the map
-                                        addMarkersForNearbyBloodBanks(nearbyBloodBanks);
-                                    } else {
-                                        Log.d("Maps_Activity", "Error getting blood banks: " + task1.getException());
-                                    }
-                                });
-                    }
-                });
-            }
-        }
-
-
+                    });
+                }
 
 
     // Helper method to convert address to LatLng
@@ -201,7 +178,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
                         userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        getNearbyBloodBanks(userLocation);
+                        getNearbyBloodDonors(userLocation);
                         stopLocationUpdates();
                     }
                 }

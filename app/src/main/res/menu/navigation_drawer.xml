@@ -17,7 +17,7 @@
         <item
             android:id="@+id/notification"
             android:icon="@drawable/baseline_notifications_24"
-            android:title="My Notifications" />
+            android:title="My Requests" />
         <item
             android:id="@+id/settings"
             android:icon="@drawable/baseline_settings_24"
@@ -26,7 +26,7 @@
         <item
             android:id="@+id/about"
             android:icon="@drawable/baseline_mark_unread_chat_alt_24"
-            android:title="About Us" />
+            android:title="About Donation" />
 
     </group>
     <item

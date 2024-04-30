@@ -12,7 +12,7 @@
         android:visible="true"
         />
     <item android:id="@+id/notifications"
-        android:title="Notifications"
+        android:title="Requests"
         android:icon="@drawable/baseline_notifications_24"
         android:visible="true"
         />

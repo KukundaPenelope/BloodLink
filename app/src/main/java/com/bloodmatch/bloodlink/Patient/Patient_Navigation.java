@@ -94,6 +94,10 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
             } else if (itemID == R.id.account) {
                 showDrawerLayoutFragment(new PatientAccount());
             }
+            else if (itemID == R.id.about) {
+                Intent intent = new Intent(Patient_Navigation.this, AboutDonation.class);
+                startActivity(intent);
+            }
             return true;
         });
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
@@ -165,6 +169,7 @@ public class Patient_Navigation extends AppCompatActivity implements NavigationV
             return R.id.notifications;
         } else if (fragment instanceof PatientAccount) {
             return R.id.account;
+
         }
         return -1;
     }

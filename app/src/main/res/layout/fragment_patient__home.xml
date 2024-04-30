@@ -156,6 +156,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+
             android:id="@+id/locate"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -180,18 +181,19 @@
                     android:layout_height="60dp"
                     android:src="@drawable/baseline_location_searching_24"
                     />
+
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:layout_marginTop="20dp"
                     android:text="Locate Nearest "
-                    android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Blood Bank "
+                    android:text="Blood Donors "
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
