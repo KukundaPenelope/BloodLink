@@ -7,35 +7,74 @@
     tools:context=".Hospital.Hospital_Home">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/back"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello, World!"
-        android:textSize="24sp"
+        android:background="@color/red"
+        app:titleTextColor="@color/white"
+        android:textAlignment="center"
+        app:title="@string/app_name"
         android:gravity="center"
-        android:layout_gravity="center"/>
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
 
+        />
     <LinearLayout
         android:id="@+id/logo"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_centerInParent="true"
         android:background="@drawable/baseline_circle_24"
-        android:elevation="30dp"
+        android:elevation="60dp"
         android:gravity="center">
 
+
+
+        <ImageView
+            android:id="@+id/emergency"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:src="@drawable/emergency" />
+
+    </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Emergency"
-            android:textSize="40dp"
-            android:textStyle="bold" />
+            android:layout_marginTop="80dp"
+            android:text="Are you having an emergency"
+            android:textStyle="italic"
+            android:textColor="@color/black"
+            android:textSize="23sp"
+            android:layout_marginLeft="50dp"/>
 
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:text="Tap on the button below"
+        android:textStyle="italic"
+        android:textColor="@color/black"
+        android:textSize="23sp"
+        android:layout_marginLeft="70dp"/>
+
+
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/locate"
+            android:layout_width="500dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="500dp"
+            android:layout_row="1"
+            android:layout_marginBottom="60dp"
+            android:layout_rowWeight="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            app:cardElevation="5dp"
+            app:cardUseCompatPadding="true"/>
+
+
+
+
 </RelativeLayout>

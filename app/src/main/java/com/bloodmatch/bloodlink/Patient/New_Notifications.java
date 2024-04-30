@@ -2,6 +2,8 @@ package com.bloodmatch.bloodlink.Patient;
 
 import static com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bloodmatch.bloodlink.Donor.RecieveRequestsAdapter;
 import com.bloodmatch.bloodlink.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -101,5 +105,52 @@ public class New_Notifications extends Fragment {
     public void removeRequest(Request request) {
         requestList.remove(request);
         adapter.notifyDataSetChanged();
+
+        // Get patient ID from the request object
+        String patientId = request.getPatient_id();
+
+        // Check if patient ID is available
+        if (patientId != null && !patientId.isEmpty()) {
+            // Get a reference to the Firestore database
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Query the "patients" collection for the document matching the patient ID
+            db.collection("patients").document(patientId)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // Extract patient location from the document (assuming it has a location field)
+                                    String patientLocation = document.getString("location");
+
+                                    // Check if patient location is available
+                                    if (patientLocation != null && !patientLocation.isEmpty()) {
+                                        // Launch Google Maps with the patient location
+                                        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + patientLocation);
+                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                        mapIntent.setPackage("com.google.android.apps.maps");
+                                        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            startActivity(mapIntent);
+                                        } else {
+                                            Log.w("New_Notifications", "Google Maps app not found");
+                                        }
+                                    } else {
+                                        Log.w("New_Notifications", "Patient location not available in patient data");
+                                    }
+                                } else {
+                                    Log.w("New_Notifications", "Patient document not found");
+                                }
+                            } else {
+                                Log.w("New_Notifications", "Error getting patient data: ", task.getException());
+                            }
+                        }
+                    });
+        } else {
+            Log.w("New_Notifications", "Patient ID not available in request");
+        }
     }
+
 }

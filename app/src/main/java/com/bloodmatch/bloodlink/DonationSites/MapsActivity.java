@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Get the patient's blood group from the intent or a database
-        patientBloodGroup = getIntent().getStringExtra("blood_group");
+        patientBloodGroup = getIntent().getStringExtra("blood_type");
     }
 
     @Override
@@ -113,16 +113,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private LatLng getLatLngFromAddress(String address) throws IOException {
+    private LatLng getLatLngFromAddress(String address) {
         Geocoder geocoder = new Geocoder(this);
-        List<Address> addresses = geocoder.getFromLocationName(address, 1);
-        if (addresses.size() > 0) {
-            Address location = addresses.get(0);
-            return new LatLng(location.getLatitude(), location.getLongitude());
-        } else {
-            return null;
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && addresses.size() > 0) {
+                Address location = addresses.get(0);
+                return new LatLng(location.getLatitude(), location.getLongitude());
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            Log.e("MapsActivity", "Geocoder IOException: " + e.getMessage());
+            return null; // Return null or handle the exception according to your app's requirements
+        } catch (IllegalArgumentException e) {
+            Log.e("MapsActivity", "Geocoder IllegalArgumentException: " + e.getMessage());
+            return null; // Return null or handle the exception according to your app's requirements
         }
     }
+
     private List<BloodBanks> getBloodBanks() {
         // Implement logic to retrieve blood banks from the database or API
         // ...
@@ -130,22 +139,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Example data
         List<BloodBanks> bloodBanks = new ArrayList<>();
         BloodBanks bloodBank = new BloodBanks();
-        bloodBank.setName("Taso Village");
-        bloodBank.setAddress("Mbarara");
-        bloodBank.setDistrict("Mbarara");
-        bloodBank.setHospitalId("wXvxMvSNuZzBXTVnCOvt");
-        bloodBank.setEmail("ggfa@gmail.com");
-        bloodBank.setContact("098883891973");
-        bloodBank.setBloodAmount(new HashMap<String,Object>() {{
-            put("A+", 774573);
-            put("A-", 93498534);
-            put("AB+", 375735);
-            put("AB-", 73745);
-            put("B+", 89385);
-            put("B-", 89350);
-            put("O+", 83753);
-            put("O-", 874753);
-        }});
+        bloodBank.getName();
+        bloodBank.getAddress();
+
         bloodBanks.add(bloodBank);
 
         return bloodBanks;
@@ -155,15 +151,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<Donor> donors = new ArrayList<>();
         Donor donor = new Donor();
-        donor.setName("Abel Jorum");
-        donor.setAge("23");
-        donor.setBlood_type("A+");
-        donor.setDonor_id("S9MwznwlVdws67ilwLWG");
-        donor.setEmail("abelj@gmail.com");
-        donor.setPhone_number("759164645");
-        donor.setGender("Male");
-        donor.setLocation("Jinja");
-        donor.setHospital_id("wXvxMvSNuZzBXTVnCOvt");
+        donor.getName();
+        donor.getLocation();
         donors.add(donor);
 
         return donors;

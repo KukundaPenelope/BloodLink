@@ -1,26 +1,243 @@
 package com.bloodmatch.bloodlink.Donor;
 
+
+
+
+import static com.bloodmatch.bloodlink.Patient.Profile2.REQUEST_EXTERNAL_STORAGE_PERMISSION;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
+import com.bloodmatch.bloodlink.Donor.Donor;
+import com.bloodmatch.bloodlink.MainActivity3;
 import com.bloodmatch.bloodlink.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class donordetails extends Fragment {
+public class donordetails extends AppCompatActivity {
 
-    public donordetails() {
-        // Required empty public constructor
-    }
+    private EditText nameEditText;
+    private EditText phoneEditText;
+    private EditText emailEditText;
+    private EditText bloodGroup;
 
+    private Button editBtn, logoutBtn, saveBtn;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private Toolbar backTool;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_donordetails, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.prof);
+
+        nameEditText = findViewById(R.id.name);
+        phoneEditText = findViewById(R.id.phoneholder);
+        emailEditText = findViewById(R.id.email);
+        bloodGroup = findViewById(R.id.bloodg);
+        logoutBtn = findViewById(R.id.logout);
+        editBtn = findViewById(R.id.edit);
+        saveBtn = findViewById(R.id.save);
+        saveBtn.setVisibility(View.GONE);
+        backTool = findViewById(R.id.profile_toolbar);
+
+        // Initialize the Firebase instances
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // Set toolbar as support action bar
+        setSupportActionBar(backTool);
+
+        // Enable the back arrow
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        backTool.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        // Check for external storage permission
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE_PERMISSION);
+        }
+
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
+        });
+
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enableEditing();
+            }
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disableEditing();
+                updateUserData(nameEditText.getText().toString(), phoneEditText.getText().toString());
+            }
+        });
+
+        // Retrieve and fill user data
+        retrieveAndFillUserData();
     }
+
+    private void retrieveAndFillUserData() {
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Retrieve the patient document based on the user ID
+            db.collection("donors").whereEqualTo("user_id", userId).get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot patientSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            String patientId = patientSnapshot.getId(); // Get the document ID as the patient ID
+                            String fname = patientSnapshot.getString("name");
+                            String phone = patientSnapshot.getString("phone_number");
+                            String email = patientSnapshot.getString("email");
+                            String bloodgroup = patientSnapshot.getString("blood_type");
+
+
+                            // Assuming "email" is the field storing user's name
+                            nameEditText.setText(fname);
+                            phoneEditText.setText(phone);
+                            emailEditText.setText(email);
+                            bloodGroup.setText(bloodgroup);
+                        } else {
+                            nameEditText.setText("User not authenticated");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
+                    });
+
+        }
+    }
+//        if (currentUser != null) {
+//            db.collection("patients").document(currentUser.getUid())
+//
+//                    .get()
+//                    .addOnSuccessListener(documentSnapshot -> {
+//                        if (documentSnapshot.exists()) {
+//                            Patient patient = documentSnapshot.toObject(Patient.class);
+//
+//                            if (patient != null) {
+//                                String fullName = patient.getFirst_name() + " " + patient.getLast_name();
+//                                nameEditText.setText(fullName);
+//                                phoneEditText.setText(patient.getPhone_number());
+//                                emailEditText.setText(patient.getEmail());
+//                                passwordEditText.setText(patient.getPassword());
+//                                bloodGroup.setText(patient.getBlood_type());
+//                            }
+//                        }
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        // Handle errors
+//                    });
+//        }
+
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Logout");
+        builder.setMessage("Are you sure you want to logout?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logoutUser();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Cancel logout
+            }
+        });
+
+        builder.show();
+    }
+
+    private void logoutUser() {
+        FirebaseAuth.getInstance().signOut();
+        SharedPreferences sharedPreferences = getSharedPreferences("donors", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+        startActivity(new Intent(donordetails.this, MainActivity3.class));
+        finish();
+    }
+
+    private void enableEditing() {
+        nameEditText.setEnabled(true);
+        phoneEditText.setEnabled(true);
+        emailEditText.setEnabled(true);
+        bloodGroup.setEnabled(true);
+        editBtn.setVisibility(View.GONE);
+        saveBtn.setVisibility(View.VISIBLE);
+    }
+
+    private void disableEditing() {
+        nameEditText.setEnabled(false);
+        phoneEditText.setEnabled(false);
+        emailEditText.setEnabled(false);
+        bloodGroup.setEnabled(false);
+        saveBtn.setVisibility(View.GONE);
+        editBtn.setVisibility(View.VISIBLE);
+    }
+    private void updateUserData(String name, String phone) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String userId = currentUser.getUid();
+
+        if (currentUser != null) {
+            // Use the UID of the current user to update the corresponding document in the "Patients" collection
+            db.collection("donors")
+                    .whereEqualTo("user_id", userId)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                            documentSnapshot.getReference().update("name", name, "phone_number", phone)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Data updated successfully
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Handle error
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle error
+                    });
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.bloodmatch.bloodlink.BloodBank;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bloodmatch.bloodlink.Hospital.Hospital;
 import com.bloodmatch.bloodlink.Patient.Patient;
 import com.bloodmatch.bloodlink.R;
 import com.google.android.gms.location.LocationCallback;
@@ -23,29 +23,31 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng userLocation;
     private Geocoder geocoder;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private static final int PERMISSION_REQUEST_CODE = 1001;
     private FirebaseFirestore firestore;
+    private LatLng userLocation;
+    private List<Patient> patientsList;
+
+    private FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
 
         // Initialize Firestore
         firestore = FirebaseFirestore.getInstance();
-
+        geocoder = new Geocoder(this);
         // Check permissions and request if not granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -78,78 +80,81 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         mMap = googleMap;
     }
 
-    private void addBloodBanksToMap() {
-        // Initialize the Geocoder
-        geocoder = new Geocoder(this, Locale.getDefault());
+    private void addMarkersForNearbyBloodBanks(List<BloodBanks> nearbyBloodBanks) {
+        for (BloodBanks bloodBank : nearbyBloodBanks) {
+            LatLng location = getLocationFromAddress(geocoder, bloodBank.getAddress());
+            if (location != null) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .title(bloodBank.getName())
+                        .snippet(bloodBank.getAddress()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
+            }
+        }
+    }
+    private void getNearbyBloodBanks(LatLng userLocation) {
+        List<BloodBanks> nearbyBloodBanks = new ArrayList<>();
 
-        // Retrieve the user's location from Firestore
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firestore.collection("patients").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Patient patient = document.toObject(Patient.class);
-                        if (patient != null) {
-                            String hospitalId = patient.getHospital_id();
+        // Retrieve the blood type of the patient
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser != null ? currentUser.getUid() : null;
 
-                            // Look for the hospital with the specified ID in Firestore
-                            firestore.collection("hospital").document(hospitalId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot hospitalDocument = task.getResult();
-                                        if (hospitalDocument.exists()) {
-                                            // Retrieve the hospital's data
-                                            Hospital hospital = hospitalDocument.toObject(Hospital.class);
-                                            if (hospital != null) {
-                                                String hospitalAddress = hospital.getAddress();
-                                                String hospitalName = hospital.getName();
+        if (userId != null) {
+            firestore.collection("patients").whereEqualTo("user_id",userId)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot donorSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+//                            String patient_Id = donorSnapshot.getString("patient_id");
 
-                                                // Convert the hospital's address to coordinates
-                                                LatLng hospitalLocation = getLocationFromAddress(geocoder, hospitalAddress);
-                                                if (hospitalLocation != null) {
-                                                    mMap.addMarker(new MarkerOptions()
-                                                            .position(hospitalLocation)
-                                                            .title(hospitalName)
-                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                            String patientBloodType = donorSnapshot.getString("blood_type");
 
-                                                    // Query nearby blood banks from Firestore and add markers to the map
-                                                    List<BloodBanks> bloodBanks = getNearbyBloodBanks(hospitalLocation);
-                                                    for (BloodBanks bloodBank : bloodBanks) {
-                                                        LatLng location = getLocationFromAddress(geocoder, bloodBank.getAddress());
-                                                        if (location != null) {
-                                                            mMap.addMarker(new MarkerOptions()
-                                                                    .position(location)
-                                                                    .title(bloodBank.getName())
-                                                                    .snippet(bloodBank.getAddress()));
-                                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
-                                                        }
+                        // Query blood banks collection in Firestore
+                        firestore.collection("blood_bank")
+                                .whereGreaterThan("blood_amount." + patientBloodType, 0)
+                                .get()
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        for (DocumentSnapshot document1 : task1.getResult()) {
+                                            // Convert Firestore document to BloodBanks object
+                                            BloodBanks bloodBank = document1.toObject(BloodBanks.class);
+
+                                            // Convert address to LatLng
+                                            LatLng bloodBankLocation = getLocationFromAddress(geocoder, document1.getString("address"));
+
+                                            if (bloodBankLocation != null) {
+                                                // Calculate distance between user location and blood bank location
+                                                double distance = calculateDistance(userLocation, bloodBankLocation);
+
+                                                // Check if blood bank is within 500 meters
+                                                if (distance <= 500) {
+                                                    // Check if blood bank has the same blood type as the patient
+                                                    if (bloodBank.getBloodAmounts().containsKey(patientBloodType)) {
+                                                        nearbyBloodBanks.add(bloodBank);
                                                     }
                                                 }
                                             }
                                         }
+                                        // Add markers for nearby blood banks on the map
+                                        addMarkersForNearbyBloodBanks(nearbyBloodBanks);
                                     } else {
-                                        Log.d("Maps_Activity", "Error getting hospital document", task.getException());
+                                        Log.d("Maps_Activity", "Error getting blood banks: " + task1.getException());
                                     }
-                                }
-                            });
-                        }
+                                });
                     }
-                } else {
-                    Log.d("Maps_Activity", "Error getting patient document", task.getException());
-                }
+                });
             }
-        });
-    }
+        }
+
+
+
 
     // Helper method to convert address to LatLng
     private LatLng getLocationFromAddress(Geocoder geocoder, String address) {
         try {
-            List<android.location.Address> addresses = geocoder.getFromLocationName(address, 1);
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
             if (addresses != null && !addresses.isEmpty()) {
-                android.location.Address location = addresses.get(0);
+                Address location = addresses.get(0);
                 return new LatLng(location.getLatitude(), location.getLongitude());
             }
         } catch (IOException e) {
@@ -158,12 +163,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         return null;
     }
 
-    // Helper method to get nearby blood banks from Firestore
-    private List<BloodBanks> getNearbyBloodBanks(LatLng userLocation) {
-        return new ArrayList<>(); // Placeholder for now
-    }
-
-
+    // Helper method to calculate distance between two locations
     private double calculateDistance(LatLng location1, LatLng location2) {
         double lat1 = location1.latitude;
         double lon1 = location1.longitude;
@@ -182,6 +182,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         return distance;
     }
 
+    // Request location permissions
     private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -189,6 +190,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         }, PERMISSION_REQUEST_CODE);
     }
 
+    // Initialize location callback
     private void initializeLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override
@@ -199,7 +201,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
                         userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        addBloodBanksToMap();
+                        getNearbyBloodBanks(userLocation);
                         stopLocationUpdates();
                     }
                 }
@@ -207,6 +209,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         };
     }
 
+    // Request location updates
     private void requestLocationUpdates() {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -219,6 +222,7 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    // Stop location updates
     private void stopLocationUpdates() {
         LocationServices.getFusedLocationProviderClient(this)
                 .removeLocationUpdates(locationCallback);

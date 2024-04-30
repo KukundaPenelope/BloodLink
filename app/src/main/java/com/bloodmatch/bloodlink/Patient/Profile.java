@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,7 +48,6 @@ public class Profile extends AppCompatActivity {
         nameEditText = findViewById(R.id.name);
         phoneEditText = findViewById(R.id.phoneholder);
         emailEditText = findViewById(R.id.email);
-        passwordEditText = findViewById(R.id.password);
         bloodGroup = findViewById(R.id.bloodg);
         logoutBtn = findViewById(R.id.logout);
         editBtn = findViewById(R.id.edit);
@@ -109,28 +109,30 @@ public class Profile extends AppCompatActivity {
        String userid= currentUser.getUid();
         Patient patient = new Patient();
         // Load donor data from Firestore based on donorId
-        db.collection("patients").whereEqualTo("user_id",userid)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot document = task.getResult();
-                        if (document != null && !document.isEmpty()) {
-                            // Retrieve donor data
-//                            String name = document.getString("name");
+        db.collection("patients").whereEqualTo("user_id",userid).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot patientSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                        String patientId = patientSnapshot.getId(); // Get the document ID as the patient ID
+                        String fname = patientSnapshot.getString("name");
+                        String phone = patientSnapshot.getString("phone_number");
+                        String email = patientSnapshot.getString("email");
+                        String bloodgroup = patientSnapshot.getString("blood_type");
 
-                                String fullName = patient.getFirst_name() + " " + patient.getLast_name();
-                                nameEditText.setText(fullName);
-                                phoneEditText.setText(patient.getPhone_number());
-                                emailEditText.setText(patient.getEmail());
-                                passwordEditText.setText(patient.getPassword());
-                                bloodGroup.setText(patient.getBlood_type());
-
-                        } else {
-                        }
+                                nameEditText.setText(fname);
+                                phoneEditText.setText(phone);
+                                emailEditText.setText(email);
+                                bloodGroup.setText(bloodgroup);
                     } else {
-                        // Handle errors
+                        nameEditText.setText("User not authenticated");
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
                 });
+
+    }
+
 //        if (currentUser != null) {
 //            db.collection("patients").document(currentUser.getUid())
 //
@@ -153,7 +155,7 @@ public class Profile extends AppCompatActivity {
 //                        // Handle errors
 //                    });
 //        }
-    }
+
 
     private void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

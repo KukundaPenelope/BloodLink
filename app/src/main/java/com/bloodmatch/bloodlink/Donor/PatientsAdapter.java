@@ -21,26 +21,26 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bloodmatch.bloodlink.Patient.Patient;
 import com.bloodmatch.bloodlink.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Random;
 
-public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.ViewHolder> {
-    private List<Donor> donorList;
+public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.ViewHolder> {
+    private List<Patient> patientList;
     private Context context;
-    private DonorRepository donorRepository;
+    private PatientRepository patientRepository;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private OnRequestClickListener onRequestClickListener; // Listener variable
 
     // Constructor with listener parameter
-    public BloodDonorAdapter(List<Donor> donorList, OnRequestClickListener onRequestClickListener) {
-        this.donorList = donorList;
-        this.onRequestClickListener = onRequestClickListener;
-        this.donorRepository = new DonorRepository(); // Initialize the hospital repository
+    public PatientsAdapter(List<Patient> patientList, LocatePatients locatePatients) {
+        this.patientList = patientList;
+        this.patientRepository = new PatientRepository(); // Initialize the hospital repository
     }
 
     @NonNull
@@ -53,20 +53,20 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Donor donor = donorList.get(position);
+        Patient patient = patientList.get(position);
 
         // Set the donor information in the item layout
-        String donorName = "Donor " + (position + 1);
-        holder.nameTextView.setText(donorName);
-        holder.bloodGroupText.setText(donor.getBlood_type());
+        String PatientName = "Patient " + (position + 1);
+        holder.nameTextView.setText(PatientName);
+        holder.bloodGroupText.setText(patient.getBlood_type());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        String donorId = donor.getDonor_id();
-        DonorRepository repository = new DonorRepository();
-        repository.getDonorById(donorId, new DonorRepository.OnPatientClickListner() {
+        String donorId = patient.getPatient_id();
+        PatientRepository repository = new PatientRepository();
+        repository.getPatientById(donorId, new PatientRepository.OnPatientClickListner() {
             @Override
-            public void onSuccess(Donor donor) {
-                holder.districtTextView.setText(donor.getLocation());
+            public void onSuccess(Patient patient) {
+                holder.districtTextView.setText(patient.getLocation());
                 holder.contactTextView.setText(generatePseudoNumber());
 
             }
@@ -84,18 +84,18 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDonorPopup(donorName, donor);
+                showDonorPopup(PatientName, patient);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return donorList.size();
+        return patientList.size();
     }
 
     public interface OnRequestClickListener {
-        void onRequestClick(Donor donor);
+        void onRequestClick(Patient patient);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -112,9 +112,9 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         }
     }
 
-    private void showDonorPopup(final String donorName, Donor donor) {
+    private void showDonorPopup(final String donorName, Patient patient) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(R.layout.donor_dialog);
+        builder.setView(R.layout.patient_dialog);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -124,15 +124,14 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         TextView contactTextView = dialog.findViewById(R.id.contactTextView2);
         LinearLayout callLayout = dialog.findViewById(R.id.callLayout2);
         LinearLayout locateLayout = dialog.findViewById(R.id.locateLayout2);
-        LinearLayout requestLayout = dialog.findViewById(R.id.requestLayout);
 
         nameTextView.setText(donorName);
 
         // Retrieve the donor information using the hospital ID
-        donorRepository.getDonorById(donor.getDonor_id(), new DonorRepository.OnPatientClickListner() {
+        patientRepository.getPatientById(patient.getPatient_id(), new PatientRepository.OnPatientClickListner() {
             @Override
-            public void onSuccess(Donor donor) {
-                districtTextView.setText(donor.getLocation());
+            public void onSuccess(Patient patient) {
+                districtTextView.setText(patient.getLocation());
                 contactTextView.setText(generatePseudoNumber());
             }
 
@@ -144,24 +143,13 @@ public class BloodDonorAdapter extends RecyclerView.Adapter<BloodDonorAdapter.Vi
         });
 
 
-        final Donor finalDonor = donor;
+        final Patient finalPatient = patient;
 
-        requestLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Check if the context implements the OnRequestClickListener interface
-                if (context instanceof OnRequestClickListener) {
-                    // Call the onRequestClick method of the context
-                    ((OnRequestClickListener) context).onRequestClick(finalDonor);
-                }
-                dialog.dismiss();
-            }
-        });
 
         callLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phoneNumber = finalDonor.getPhone_number();
+                String phoneNumber = finalPatient.getPhone_number();
                 if (phoneNumber != null && !phoneNumber.isEmpty()) {
                     String countryCode = "+256";
                     String phoneNumberWithCountryCode = countryCode + phoneNumber;

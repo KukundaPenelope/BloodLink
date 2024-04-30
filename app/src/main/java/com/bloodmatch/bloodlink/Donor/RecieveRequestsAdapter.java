@@ -66,7 +66,7 @@ public class RecieveRequestsAdapter extends RecyclerView.Adapter<RecieveRequests
         // Set click listener for the item view
         holder.itemView.setOnClickListener(v -> {
             // Show the dialog fragment
-            ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request, position);
+            ApprovalDialogFragment dialogFragment = new ApprovalDialogFragment(request);
             FragmentManager fragmentManager = ((AppCompatActivity) holder.itemView.getContext()).getSupportFragmentManager();
             dialogFragment.show(fragmentManager, "ApprovalDialogFragment");
         });

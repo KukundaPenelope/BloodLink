@@ -56,16 +56,16 @@ public class HospitalsAdapter extends RecyclerView.Adapter<HospitalsAdapter.Hosi
                 // Create a new dialog
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
                 LayoutInflater inflater = LayoutInflater.from(context);
-                View dialogView = inflater.inflate(R.layout.donor_dialog, null);
+                View dialogView = inflater.inflate(R.layout.hos_dialog, null);
                 dialogBuilder.setView(dialogView);
 
                 // Set the blood bank details in the dialog's views
                 TextView nameTextView = dialogView.findViewById(R.id.nameTextView2);
-                TextView addressTextView = dialogView.findViewById(R.id.districtTextView2);
+                TextView addressTextView = dialogView.findViewById(R.id.di);
                 TextView contactTextView = dialogView.findViewById(R.id.contactTextView2);
 
                 nameTextView.setText(hospital.getName());
-                addressTextView.setText(hospital.getDistrict());
+                addressTextView.setText(hospital.getAddress());
                 contactTextView.setText(hospital.getContact());
 
                 // Find the locate_Layout TextView in the dialog view
@@ -140,14 +140,21 @@ public class HospitalsAdapter extends RecyclerView.Adapter<HospitalsAdapter.Hosi
         public HositalsViwholder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView2);
-            addressTextView = itemView.findViewById(R.id.districtTextView2);
+            addressTextView = itemView.findViewById(R.id.di);
             contactTextView = itemView.findViewById(R.id.contactTextView2);
         }
 
         public void bind(Hospital hospital) {
-            nameTextView.setText(hospital.getName());
-            addressTextView.setText(hospital.getDistrict());
-            contactTextView.setText(hospital.getContact());
+            if (nameTextView != null) {
+                nameTextView.setText(hospital.getName());
+            }
+            if (addressTextView != null) {
+                addressTextView.setText(hospital.getAddress());
+            }
+            if (contactTextView != null) {
+                contactTextView.setText(hospital.getContact());
+            }
         }
+
     }
 }

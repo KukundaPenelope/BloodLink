@@ -1,17 +1,14 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:ignore="MissingDefaultResource">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-
         android:orientation="horizontal">
 
         <ImageView
@@ -30,56 +27,41 @@
             android:layout_marginStart="16dp">
 
             <TextView
-                android:id="@+id/nameTextView2"
+                android:id="@+id/nameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"/>
 
             <TextView
-                android:id="@+id/districtTextView"
+                android:id="@+id/bloodtype"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:textSize="16sp"
-                android:textColor="@color/gray"/>
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/addressTextView"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginTop="2dp"-->
-            <!--                android:textSize="16sp"-->
-            <!--                android:textColor="@color/black"/>-->
+                android:text="A+"
+                android:textColor="@color/red"/>
 
             <TextView
-                android:id="@+id/contactTextView"
+                android:id="@+id/amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:textSize="16sp"
+                android:text="A+"
+                android:textColor="@color/red"/>
+
+
+            <TextView
+                android:id="@+id/addressTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/black"/>
 
         </LinearLayout>
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_marginEnd="30dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginStart="16dp">-->
-<!--            <TextView-->
-<!--                android:id="@+id/bloodGroupText"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:text="0+"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textSize="20dp"-->
-<!--                android:textColor="@color/red"-->
-<!--                />-->
-<!--        </LinearLayout>-->
     </LinearLayout>
 
 

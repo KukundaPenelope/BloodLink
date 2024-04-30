@@ -20,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PatientAccount extends Fragment {
 
-    private TextView log;
+    private TextView log,About;
     private ImageView edit;
     private FirebaseFirestore db;
     private FirebaseAuth firebaseAuth;
@@ -36,6 +36,7 @@ public class PatientAccount extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_patient_account, container, false);
 
         log = rootView.findViewById(R.id.logout);
+        About = rootView.findViewById(R.id.about);
 
         edit = rootView.findViewById(R.id.editProfile);
 
@@ -63,7 +64,13 @@ public class PatientAccount extends Fragment {
                     .addOnFailureListener(e -> {
                     });
         }
-
+        About.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AboutDonation.class);
+                startActivity(intent);
+            }
+        });
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override

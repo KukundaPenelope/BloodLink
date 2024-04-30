@@ -1,10 +1,12 @@
 package com.bloodmatch.bloodlink.BloodBank;
 
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class BloodBanks {
     private String address;
-    private Map<String, Object> bloodAmount;
+    private Map<String, Long> bloodAmounts; // Map to store blood amounts for different blood types
     private String contact;
     private String created;
     private String createdBy;
@@ -14,12 +16,13 @@ public class BloodBanks {
     private String name;
 
     public BloodBanks() {
-        // Default constructor required for Firestore
+        this.bloodAmounts = new HashMap<>();
+
     }
 
-    public BloodBanks(String address, Map<String, Object> bloodAmount, String contact, String created, String createdBy, String district, String email, String hospitalId, String name) {
+    public BloodBanks(String address, Map<String, Long> bloodAmounts, String contact, String created, String createdBy, String district, String email, String hospitalId, String name) {
         this.address = address;
-        this.bloodAmount = bloodAmount;
+        this.bloodAmounts = bloodAmounts;
         this.contact = contact;
         this.created = created;
         this.createdBy = createdBy;
@@ -37,12 +40,12 @@ public class BloodBanks {
         this.address = address;
     }
 
-    public Map<String, Object> getBloodAmount() {
-        return bloodAmount;
+    public Map<String, Long> getBloodAmounts() {
+        return bloodAmounts;
     }
 
-    public void setBloodAmount(Map<String, Object> bloodAmount) {
-        this.bloodAmount = bloodAmount;
+    public void setBloodAmounts(Map<String, Long> bloodAmounts) {
+        this.bloodAmounts = bloodAmounts;
     }
 
     public String getContact() {

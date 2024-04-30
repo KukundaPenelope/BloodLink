@@ -5,13 +5,41 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Donor.Donor_Navigation">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:elevation="4dp"
+        app:title="Welcome back"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    <EditText
+        android:text="name"
+        android:id="@+id/name"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/c"
+        android:drawablePadding="8dp"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        android:elevation="4dp"
+        android:editable="false"
+        android:padding="10dp" />
     <LinearLayout
         android:id="@+id/lin"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="230dp"
         android:orientation="vertical"
+        android:layout_below="@+id/name"
         android:background="#D9F2EE"
         >
+
         <!--        <TextView-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="wrap_content"-->
@@ -20,20 +48,20 @@
         <!--            android:layout_marginLeft="20dp"-->
         <!--            android:textSize="25dp"-->
         <!--            />-->
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/f7"
+            android:id="@+id/image"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/lin2"
         android:layout_width="200dp"
         android:layout_height="10dp"
+        android:layout_below="@+id/lin"
         android:orientation="horizontal"
         android:background="@color/red"
-        android:layout_marginTop="201dp"
         >
 
     </LinearLayout>
@@ -42,50 +70,49 @@
         android:layout_height="10dp"
         android:layout_toRightOf="@+id/lin2"
         android:orientation="horizontal"
+        android:layout_below="@+id/lin"
         android:background="#0496C7"
-        android:layout_marginTop="201dp"
         >
 
     </LinearLayout>
+    <ImageView
+        android:id="@+id/donorsProfile"
+        android:layout_width="40dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="290dp"
+        android:elevation="10dp"
+        android:src="@drawable/ic_edit_profile" />
 
     <ImageView
         android:id="@+id/logout"
         android:layout_width="40dp"
         android:layout_height="54dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="340dp"
         android:elevation="10dp"
-        android:src="@drawable/baseline_logout" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="310dp"
-        android:text="Logout"
-        android:layout_marginTop="170dp"
-        android:textSize="20sp"
-        android:elevation="10dp"
-        android:textColor="@color/red"
-        android:textStyle="bold" />
+        android:src="@drawable/ic_logout" />
 
-<!--    &lt;!&ndash; Logo Card &ndash;&gt;-->
-<!--    <androidx.cardview.widget.CardView-->
-<!--        android:id="@+id/logoCard"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:cardCornerRadius="60dp"-->
-<!--        android:foregroundGravity="center"-->
-<!--        android:layout_marginTop="50dp"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        app:cardElevation="50dp">-->
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imge"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="100dp"-->
-<!--            android:background="#FDF6FE"-->
-<!--            android:src="@drawable/newlogo" />-->
+    <!--    &lt;!&ndash; Logo Card &ndash;&gt;-->
+    <!--    <androidx.cardview.widget.CardView-->
+    <!--        android:id="@+id/logoCard"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:cardCornerRadius="60dp"-->
+    <!--        android:foregroundGravity="center"-->
+    <!--        android:layout_marginTop="50dp"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        app:cardElevation="50dp">-->
 
-<!--    </androidx.cardview.widget.CardView>-->
+    <!--        <ImageView-->
+    <!--            android:id="@+id/imge"-->
+    <!--            android:layout_width="100dp"-->
+    <!--            android:layout_height="100dp"-->
+    <!--            android:background="#FDF6FE"-->
+    <!--            android:src="@drawable/newlogo" />-->
+
+    <!--    </androidx.cardview.widget.CardView>-->
 
     <!-- Main Card -->
     <LinearLayout
@@ -96,7 +123,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@id/lin"
         android:elevation="2dp"
-      >
+        >
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -118,7 +145,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:layout_marginTop="40dp">
+                    android:layout_marginTop="90dp">
 
                     <!-- Requests -->
                     <ImageView
@@ -135,7 +162,7 @@
                         android:textStyle="bold"
                         android:textSize="18sp"
                         android:gravity="center_horizontal"/>
-\
+                    \
                     <!-- About Donation -->
                     <ImageView
                         android:id="@+id/aboutDonation"
@@ -153,21 +180,7 @@
                         android:textSize="18sp"
                         android:gravity="center_horizontal"/>
 
-                    <!-- Donation History -->
-                    <ImageView
-                        android:id="@+id/history"
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
-                        android:layout_marginTop="60dp"
-                        android:src="@drawable/baseline_history_24"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Donation History"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:gravity="center_horizontal"/>
                 </LinearLayout>
 
                 <!-- Right Section -->
@@ -177,7 +190,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="60dp">
 
                     <!-- Donation Sites -->
                     <ImageView
@@ -196,38 +209,53 @@
                         android:layout_marginTop="10dp"
                         android:textSize="18sp"
                         android:textStyle="bold" />
-
-                    <!-- Donor's Profile -->
+                    <!-- Donation History -->
                     <ImageView
-                        android:id="@+id/donorsProfile"
+                        android:id="@+id/receipients"
                         android:layout_width="70dp"
                         android:layout_height="54dp"
                         android:layout_marginTop="60dp"
-                        android:src="@drawable/baseline_person_24" />
+                        android:src="@drawable/baseline_person_24"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="Donor's Profile"
+                        android:text="Receipients"
+                        android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_horizontal"/>
 
-                    <!-- Donor Rewards -->
-                    <ImageView
-                        android:id="@+id/rewards"
-                        android:layout_width="70dp"
-                        android:layout_height="54dp"
-                        android:layout_marginTop="60dp"
-                        android:src="@drawable/reward" />
+<!--                    &lt;!&ndash; Donor's Profile &ndash;&gt;-->
+<!--                    <ImageView-->
+<!--                        android:id="@+id/donorsProfile"-->
+<!--                        android:layout_width="70dp"-->
+<!--                        android:layout_height="54dp"-->
+<!--                        android:layout_marginTop="60dp"-->
+<!--                        android:src="@drawable/baseline_person_24" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="Donor Rewards"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:text="Donor's Profile"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:textStyle="bold" />-->
+
+                    <!--                    &lt;!&ndash; Donor Rewards &ndash;&gt;-->
+                    <!--                    <ImageView-->
+                    <!--                        android:id="@+id/rewards"-->
+                    <!--                        android:layout_width="70dp"-->
+                    <!--                        android:layout_height="54dp"-->
+                    <!--                        android:layout_marginTop="60dp"-->
+                    <!--                        android:src="@drawable/reward" />-->
+
+                    <!--                    <TextView-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:gravity="center_horizontal"-->
+                    <!--                        android:text="Donor Rewards"-->
+                    <!--                        android:textSize="18sp"-->
+                    <!--                        android:textStyle="bold" />-->
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

@@ -41,7 +41,7 @@ public class Profile2 extends Fragment {
     private ImageView imageView;
     private DatabaseReference dbRef;
     private FirebaseAuth mAuth;
-    static final int REQUEST_EXTERNAL_STORAGE_PERMISSION=123;
+    public static final int REQUEST_EXTERNAL_STORAGE_PERMISSION=123;
 
     public Profile2() {
         // Required empty public constructor
@@ -55,7 +55,6 @@ public class Profile2 extends Fragment {
         nameEditText = view.findViewById(R.id.name);
         phoneEditText = view.findViewById(R.id.phoneholder);
         emailEditText = view.findViewById(R.id.email);
-        passwordEditText = view.findViewById(R.id.password);
         logoutBtn=view.findViewById(R.id.logout);
         editBtn=view.findViewById(R.id.edit);
         saveBtn=view.findViewById(R.id.save);

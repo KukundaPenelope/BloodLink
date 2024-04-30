@@ -24,7 +24,6 @@ import java.util.List;
 public class LocateBloodBanks extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BloodBankAdapter adapter;
-    private HospitalsAdapter adapter2;
     private List<BloodBanks> bloodBanks;
     private List<Donor> donors;
 

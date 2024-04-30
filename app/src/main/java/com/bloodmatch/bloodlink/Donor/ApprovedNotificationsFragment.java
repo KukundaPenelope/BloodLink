@@ -17,14 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bloodmatch.bloodlink.R;
 import com.bloodmatch.bloodlink.Patient.Request;
-import com.bloodmatch.bloodlink.Patient.RequestAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,9 +59,9 @@ public class ApprovedNotificationsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // Load requests with status "in_progress" when the fragment starts
-        loadRequestsInProgress();
+        loadRequestsApproved();
     }
-    private void loadRequestsInProgress() {
+    private void loadRequestsApproved() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         db.collection("donors").whereEqualTo("user_id", currentUserId)
                 .get()
